@@ -85,7 +85,7 @@
         }
         .sidebar.active { left: 0; }
 
-        .sidebar-brand-desktop { display: none; } /* Only for large screens */
+        .sidebar-brand-desktop { display: none; } 
 
         .user-profile {
             width: 100%; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 16px;
@@ -148,12 +148,15 @@
         #appViewer { display: none; width: 100%; height: 100%; border: none; background: transparent; flex: 1; }
         #dashboardContent { flex: 1; display: flex; flex-direction: column; gap: 25px; }
 
+        /* --- DESKTOP BACK BUTTON (Strictly Hidden on Mobile) --- */
+        .desktop-back-nav { display: none !important; }
+
         /* =========================================
            DESKTOP OVERRIDES
         ========================================= */
         @media (min-width: 768px) {
             .app-container { flex-direction: row; }
-            .mobile-header { display: none; } /* Hide dynamic header on desktop */
+            .mobile-header { display: none; } 
             
             .sidebar-overlay { display: none; }
             .sidebar {
@@ -171,11 +174,14 @@
             .app-card { flex-direction: column; gap: 12px; padding: 25px; }
             .app-icon { width: 60px; height: 60px; }
             
-            /* Native Desktop Back Button */
-            .desktop-back-nav { display: none; align-items: center; gap: 10px; cursor: pointer; font-size: 18px; font-weight: bold; color: #38bdf8; margin-bottom: 10px; padding: 15px; border-radius: 12px; background: rgba(56, 189, 248, 0.05); border: 1px solid rgba(56, 189, 248, 0.2); width: fit-content; }
+            /* Native Desktop Back Button shown ONLY when active class is added */
+            .desktop-back-nav.active { 
+                display: flex !important; align-items: center; gap: 10px; cursor: pointer; 
+                font-size: 18px; font-weight: bold; color: #38bdf8; margin-bottom: 10px; 
+                padding: 15px; border-radius: 12px; background: rgba(56, 189, 248, 0.05); 
+                border: 1px solid rgba(56, 189, 248, 0.2); width: fit-content; 
+            }
         }
-
-        .desktop-back-nav { display: none; } /* Hidden entirely on mobile */
 
         .install-fab {
             position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #10b981, #059669); color: white;
@@ -262,8 +268,7 @@
                 </div>
 
                 <div class="section-title">Your Applications</div>
-                <div class="app-grid" id="appList">
-                    </div>
+                <div class="app-grid" id="appList"></div>
             </div>
 
             <iframe id="appViewer" src=""></iframe>
@@ -308,7 +313,6 @@
             startHeartbeat();
         };
 
-        // --- DRAWER TOGGLE ---
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
             document.getElementById('sidebarOverlay').classList.toggle('active');
@@ -348,7 +352,6 @@
             const app = APP_DIRECTORY[appId];
             const card = document.createElement('div');
             card.className = 'app-card';
-            // Pass icon and name details to openApp so the header can update
             card.onclick = () => openApp(appId, app.path, permissionsArr, app.iconClass, app.iconSVG, app.name);
 
             const tagsHTML = permissionsArr.map(p => `<div class="perm-tag">${p}</div>`).join('');
@@ -363,28 +366,22 @@
             return card;
         }
 
-        // --- APP LAUNCHER & HEADER SWAP ---
         function openApp(appId, path, permissions, iconClass, iconSVG, appName) {
             document.getElementById('dashboardContent').style.display = 'none';
             
-            // Desktop Back Button
-            document.getElementById('desktopBackBtn').style.display = 'flex';
+            // Add 'active' class to show desktop button ONLY on desktop screens
+            document.getElementById('desktopBackBtn').classList.add('active');
             
-            // Mobile Header Swap
             document.getElementById('headerDashboard').style.display = 'none';
             const headerApp = document.getElementById('headerApp');
             headerApp.style.display = 'flex';
             
-            // Inject App Info into Mobile Header
             const iconContainer = document.getElementById('headerAppIcon');
             iconContainer.className = `current-app-icon ${iconClass}`;
             iconContainer.innerHTML = iconSVG;
             document.getElementById('headerAppName').innerText = appName;
 
-            // Remove padding to give app 100% space
             document.getElementById('mainArena').style.padding = '0';
-
-            // Ensure sidebar closes if open (on mobile)
             document.getElementById('sidebar').classList.remove('active');
             document.getElementById('sidebarOverlay').classList.remove('active');
 
@@ -397,13 +394,12 @@
             document.getElementById('appViewer').src = '';
             document.getElementById('appViewer').style.display = 'none';
             
-            document.getElementById('desktopBackBtn').style.display = 'none';
+            // Remove 'active' class to hide desktop button
+            document.getElementById('desktopBackBtn').classList.remove('active');
             
-            // Mobile Header Swap Back
             document.getElementById('headerApp').style.display = 'none';
             document.getElementById('headerDashboard').style.display = 'flex';
             
-            // Restore padding
             document.getElementById('mainArena').style.padding = '';
             document.getElementById('dashboardContent').style.display = 'flex';
         }

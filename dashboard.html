@@ -3,7 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>G. S. Tutorial - Dashboard</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -43,7 +53,6 @@
             overflow-y: auto;
         }
 
-        /* Desktop Layout Override */
         @media (min-width: 768px) {
             .app-container { flex-direction: row; }
             .sidebar {
@@ -61,6 +70,12 @@
         }
 
         /* --- UI COMPONENTS --- */
+        .sidebar-logo {
+            width: 70px; height: 70px; border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); object-fit: contain;
+            margin-bottom: 20px;
+        }
+
         .user-profile {
             display: flex;
             align-items: center;
@@ -94,7 +109,7 @@
         .logout-btn:hover { background: rgba(239,68,68,0.8); }
 
         .creator-tag {
-            text-align: center; font-size: 12px; color: #64748b; margin-top: 15px;
+            text-align: center; font-size: 13px; color: #94a3b8; margin-top: 15px; font-weight: 600;
         }
 
         /* --- APP GRID --- */
@@ -149,17 +164,30 @@
             display: none; align-items: center; gap: 10px; cursor: pointer;
             font-weight: bold; color: #38bdf8; margin-bottom: 10px;
         }
+
+        /* PWA Install Button */
+        .install-fab {
+            position: fixed; bottom: 20px; right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669); color: white;
+            border: none; border-radius: 50px; padding: 14px 24px;
+            font-size: 15px; font-weight: 800; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            cursor: pointer; z-index: 1000; display: none; align-items: center; gap: 8px;
+        }
     </style>
 </head>
 <body>
 
     <div class="app-container">
         <div class="sidebar">
-            <div class="user-profile">
-                <div class="avatar" id="userInitials">U</div>
-                <div class="user-info">
-                    <h3 id="displayUsername">Loading...</h3>
-                    <div class="role-badge" id="displayRole">User</div>
+            <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                <img src="logo.png" alt="GS Logo" class="sidebar-logo" onerror="this.style.display='none'">
+                
+                <div class="user-profile">
+                    <div class="avatar" id="userInitials">U</div>
+                    <div class="user-info">
+                        <h3 id="displayUsername">Loading...</h3>
+                        <div class="role-badge" id="displayRole">User</div>
+                    </div>
                 </div>
             </div>
 
@@ -172,7 +200,7 @@
                     </svg>
                     Secure Logout
                 </button>
-                <div class="creator-tag">Built by Gobind Sharma</div>
+                <div class="creator-tag">App Created By Gobind Sharma</div>
             </div>
         </div>
 
@@ -187,13 +215,15 @@
                 <div id="adminSection" style="display: none;">
                     <div class="section-title">System Administration</div>
                     <div class="app-grid" style="margin-bottom: 30px;">
-                        <div class="app-card" onclick="alert('Admin Panel UI will load here')">
+                        
+                        <div class="app-card" onclick="openApp('admin-panel', 'apps/user-management/index.html', ['Full Access'])">
                             <div class="app-icon icon-purple">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                             </div>
                             <div class="app-name">User Management</div>
                             <div class="app-desc">Create users, reset passwords, and configure access levels.</div>
                         </div>
+
                     </div>
                 </div>
 
@@ -206,14 +236,42 @@
         </div>
     </div>
 
+    <button id="installAppBtn" class="install-fab">📲 Install App</button>
+
     <script>
+        // ==========================================
+        // PWA INSTALL LOGIC
+        // ==========================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    reg.update();
+                });
+            });
+        }
+
+        let deferredPrompt;
+        const installBtn = document.getElementById('installAppBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'flex';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+        });
+
         // ==========================================
         // CONFIGURATION
         // ==========================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbw8zzUWvMskW21zeSAc0ClXYp75q9g5_wcHxlABs6CascdJYD7K0u4InmAjiVKy1fGlFA/exec';
-        const HEARTBEAT_INTERVAL = 5 * 60 * 1000; // 5 minutes
+        const HEARTBEAT_INTERVAL = 5 * 60 * 1000; 
 
-        // Application Directory (Maps app IDs to UI details and folder paths)
         const APP_DIRECTORY = {
             "tuition-manager": {
                 name: "Tuition Manager",
@@ -232,14 +290,14 @@
         };
 
         // ==========================================
-        // INITIALIZATION & AUTH CHECK
+        // INITIALIZATION
         // ==========================================
         window.onload = () => {
             const token = localStorage.getItem('gs_token');
             const username = localStorage.getItem('gs_username');
             
             if (!token || !username) {
-                window.location.href = 'index.html'; // Kick out if no token
+                window.location.href = 'index.html';
                 return;
             }
 
@@ -268,16 +326,12 @@
             const role = localStorage.getItem('gs_role');
             let accessData = {};
             
-            try {
-                accessData = JSON.parse(localStorage.getItem('gs_access')) || {};
-            } catch (e) {
-                console.error("Error parsing access data");
-            }
+            try { accessData = JSON.parse(localStorage.getItem('gs_access')) || {}; } 
+            catch (e) {}
 
             const appListContainer = document.getElementById('appList');
-            appListContainer.innerHTML = ''; // Clear loading state
+            appListContainer.innerHTML = ''; 
 
-            // If Admin, inject ALL apps with ALL permissions
             if (role === 'Admin') {
                 Object.keys(APP_DIRECTORY).forEach(appId => {
                     appListContainer.appendChild(createAppCard(appId, ["All Access"]));
@@ -285,9 +339,7 @@
                 return;
             }
 
-            // If normal User, render only apps listed in their JSON profile
             const allowedApps = Object.keys(accessData);
-            
             if (allowedApps.length === 0) {
                 appListContainer.innerHTML = '<div style="color: #94a3b8;">No applications assigned to this account.</div>';
                 return;
@@ -306,7 +358,6 @@
             card.className = 'app-card';
             card.onclick = () => openApp(appId, app.path, permissionsArr);
 
-            // Generate permission tags
             const tagsHTML = permissionsArr.map(p => `<div class="perm-tag">${p}</div>`).join('');
 
             card.innerHTML = `
@@ -323,13 +374,11 @@
         // ==========================================
         // IFRAME APP LAUNCHER
         // ==========================================
-        // This keeps the URL as dashboard.html but loads the sub-app securely inside.
         function openApp(appId, path, permissions) {
             document.getElementById('dashboardContent').style.display = 'none';
             document.getElementById('backBtn').style.display = 'flex';
             
             const viewer = document.getElementById('appViewer');
-            // We can pass the user's specific permissions as a URL parameter to the sub-app so it knows what UI to show
             const encodedPerms = encodeURIComponent(JSON.stringify(permissions));
             viewer.src = `${path}?perms=${encodedPerms}`;
             viewer.style.display = 'block';
@@ -361,10 +410,7 @@
                         alert("Session expired due to inactivity or invalid token. Please log in again.");
                         logout();
                     }
-                } catch (error) {
-                    console.error("Heartbeat check failed. Network issue.");
-                    // We don't log them out on network error, only on explicit 'expired' response from server
-                }
+                } catch (error) {}
             }, HEARTBEAT_INTERVAL);
         }
 

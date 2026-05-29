@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GS Secure Access Portal</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: radial-gradient(circle at top, #1e3a8a 0%, #0f172a 40%, #020617 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            color: white;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+            border-radius: 30px;
+            padding: 35px 25px;
+            border: 1px solid rgba(255,255,255,0.10);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.45);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-container { text-align: center; margin-bottom: 20px; }
+        
+        .logo {
+            width: 80px; height: 80px;
+            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.40);
+            margin-bottom: 10px;
+        }
+
+        .title {
+            text-align: center; font-size: 24px; font-weight: 800;
+        }
+
+        .subtitle {
+            text-align: center; color: #cbd5e1; font-size: 14px; margin-top: 8px; margin-bottom: 25px;
+        }
+
+        .input-group { margin-bottom: 15px; }
+        
+        .input-group label {
+            display: block; font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 5px;
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            padding: 14px;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: #38bdf8;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .primary-btn {
+            width: 100%; border: none; border-radius: 16px; padding: 15px;
+            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            color: white; font-size: 16px; font-weight: 800; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(37,99,235,0.35);
+            transition: 0.3s; margin-top: 10px;
+            display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+
+        .primary-btn:active { transform: scale(0.97); }
+        .primary-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+        /* Hidden by default until First Login is triggered */
+        #firstLoginSection { display: none; }
+        
+        #toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 14px 20px; border-radius: 18px; color: white; font-weight: 700;
+            z-index: 9999; display: none; text-align: center;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.40);
+        }
+
+        .spinner {
+            width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: white;
+            animation: spin 1s ease-in-out infinite; display: none;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="toast"></div>
+
+    <div class="container" id="mainCard">
+        
+        <div class="logo-container">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            <div class="title">GS Secure Portal</div>
+            <div class="subtitle">Authorized Access Only</div>
+        </div>
+
+        <form id="loginForm" onsubmit="attemptLogin(event)">
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" class="input-field" required autocomplete="username">
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <input type="password" id="password" class="input-field" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="primary-btn" id="loginBtn">
+                <span>Sign In</span>
+                <div class="spinner" id="loginSpinner"></div>
+            </button>
+        </form>
+
+        <form id="firstLoginSection" onsubmit="setNewPassword(event)">
+            <div class="subtitle" style="color: #fbbf24; font-weight: bold;">
+                Action Required: Please set a new, permanent password to continue.
+            </div>
+            <div class="input-group">
+                <label>New Password</label>
+                <input type="password" id="newPassword" class="input-field" required minlength="6">
+            </div>
+            <div class="input-group">
+                <label>Confirm New Password</label>
+                <input type="password" id="confirmPassword" class="input-field" required minlength="6">
+            </div>
+            <button type="submit" class="primary-btn" id="resetBtn">
+                <span>Save & Login</span>
+                <div class="spinner" id="resetSpinner"></div>
+            </button>
+        </form>
+
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycbw8zzUWvMskW21zeSAc0ClXYp75q9g5_wcHxlABs6CascdJYD7K0u4InmAjiVKy1fGlFA/exec';
+        
+        // Temporary storage for First Login flow
+        let tempUsername = '';
+        let tempOldPassword = '';
+
+        // ==========================================
+        // UI HELPERS
+        // ==========================================
+        function showToast(message, type = 'error') {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.style.background = type === 'success' ? 'linear-gradient(135deg, #059669, #10b981)' : 'linear-gradient(135deg, #dc2626, #ef4444)';
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        }
+
+        function toggleLoading(btnId, spinnerId, isLoading) {
+            const btn = document.getElementById(btnId);
+            const spinner = document.getElementById(spinnerId);
+            btn.disabled = isLoading;
+            spinner.style.display = isLoading ? 'block' : 'none';
+            btn.querySelector('span').style.display = isLoading ? 'none' : 'block';
+        }
+
+        // ==========================================
+        // CORE LOGIC
+        // ==========================================
+        async function attemptLogin(e) {
+            e.preventDefault();
+            
+            const user = document.getElementById('username').value.trim();
+            const rawPass = document.getElementById('password').value;
+            
+            // Hash password client-side before sending
+            const hashedPass = CryptoJS.SHA256(rawPass).toString();
+            
+            toggleLoading('loginBtn', 'loginSpinner', true);
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'login', username: user, password: hashedPass })
+                });
+                
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    // Store secure data in browser LocalStorage
+                    localStorage.setItem('gs_token', result.token);
+                    localStorage.setItem('gs_username', user);
+                    localStorage.setItem('gs_role', result.role);
+                    localStorage.setItem('gs_access', JSON.stringify(result.access));
+                    
+                    // Redirect to the Dashboard
+                    window.location.href = 'dashboard.html';
+
+                } else if (result.status === 'first_login') {
+                    // Trigger the Password Reset UI
+                    tempUsername = user;
+                    tempOldPassword = hashedPass; // We need to send this to prove we own the account
+                    
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('firstLoginSection').style.display = 'block';
+                    document.getElementById('mainCard').style.animation = 'none'; // Reset animation
+                    document.getElementById('mainCard').offsetHeight; // Trigger reflow
+                    document.getElementById('mainCard').style.animation = 'fadeIn 0.4s ease-out';
+                    
+                } else {
+                    showToast(result.message);
+                }
+
+            } catch (error) {
+                showToast("Network Error. Please try again.");
+            }
+            
+            toggleLoading('loginBtn', 'loginSpinner', false);
+        }
+
+        async function setNewPassword(e) {
+            e.preventDefault();
+            
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            
+            if (newPass !== confirmPass) {
+                showToast("Passwords do not match!");
+                return;
+            }
+
+            const newHashedPass = CryptoJS.SHA256(newPass).toString();
+            toggleLoading('resetBtn', 'resetSpinner', true);
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ 
+                        action: 'set_first_password', 
+                        username: tempUsername, 
+                        oldPassword: tempOldPassword,
+                        newPasswordHash: newHashedPass
+                    })
+                });
+                
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showToast("Password Updated! Logging you in...", "success");
+                    
+                    // Automatically log them in with the new password
+                    document.getElementById('password').value = newPass;
+                    setTimeout(() => {
+                        document.getElementById('loginForm').style.display = 'block';
+                        document.getElementById('firstLoginSection').style.display = 'none';
+                        attemptLogin(new Event('submit')); // Trigger the login function again
+                    }, 1500);
+                } else {
+                    showToast(result.message);
+                }
+            } catch (error) {
+                showToast("Network Error. Please try again.");
+            }
+            
+            toggleLoading('resetBtn', 'resetSpinner', false);
+        }
+
+        // Auto-redirect if already logged in (Simple check, dashboard will do the hard verify)
+        window.onload = () => {
+            if (localStorage.getItem('gs_token')) {
+                window.location.href = 'dashboard.html';
+            }
+        }
+    </script>
+</body>
+</html>

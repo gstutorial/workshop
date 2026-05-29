@@ -13,18 +13,14 @@
             background: radial-gradient(circle at top, #1e3a8a 0%, #0f172a 40%, #020617 100%);
             color: white;
             min-height: 100vh;
-            padding: 15px; /* Optimized padding for mobile */
-            overflow-x: hidden; /* Prevents any accidental horizontal scrolling */
+            padding: 15px; 
+            overflow-x: hidden; 
         }
 
         /* --- HEADER --- */
         .header {
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            margin-bottom: 20px; 
-            flex-wrap: wrap; 
-            gap: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 15px;
         }
 
         .title-group h2 { font-size: 20px; font-weight: 800; color: white; margin-bottom: 4px; }
@@ -38,8 +34,7 @@
         }
         
         .btn-primary { 
-            background: linear-gradient(135deg, #10b981, #059669); 
-            color: white; 
+            background: linear-gradient(135deg, #10b981, #059669); color: white; 
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
         }
         .btn-primary:active { transform: scale(0.95); }
@@ -47,33 +42,23 @@
         /* --- USER GRID & CARDS --- */
         .user-grid {
             display: grid; 
-            /* THE FIX: min(100%, 280px) ensures it never overflows the screen on tiny devices */
             grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); 
             gap: 15px;
         }
 
         .user-card {
             background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 18px; 
-            padding: 18px;
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 18px;
+            display: flex; flex-direction: column; gap: 15px;
+            backdrop-filter: blur(10px); box-shadow: 0 8px 25px rgba(0,0,0,0.25);
             transition: transform 0.2s;
         }
 
         .user-card:hover { transform: translateY(-3px); }
 
-        /* Card Section 1: Identity */
         .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding-bottom: 12px;
+            display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;
         }
 
         .avatar {
@@ -81,8 +66,7 @@
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             display: flex; align-items: center; justify-content: center;
             font-size: 18px; font-weight: 800; color: white;
-            box-shadow: 0 5px 15px rgba(59,130,246,0.4);
-            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(59,130,246,0.4); flex-shrink: 0;
         }
 
         .user-meta { flex: 1; min-width: 0; }
@@ -93,28 +77,21 @@
         .badge-admin { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
         .badge-user { background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
         .badge-status { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
+        .badge-firstlogin { background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
 
-        /* Card Section 2: Apps */
         .card-apps { flex: 1; }
         .section-label { font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .app-item {
-            background: rgba(0,0,0,0.2);
-            border-radius: 10px; padding: 8px 10px; margin-bottom: 6px;
+            background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px 10px; margin-bottom: 6px;
             display: flex; justify-content: space-between; align-items: center;
         }
         .app-name { font-size: 13px; font-weight: 600; color: #e2e8f0; }
         .app-perms { font-size: 10px; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 5px; }
 
-        /* Card Section 3: Actions */
-        .card-actions { 
-            display: flex; gap: 8px; margin-top: 5px; 
-        }
+        .card-actions { display: flex; gap: 8px; margin-top: 5px; }
         .btn-edit { flex: 1; background: rgba(59,130,246,0.15); color: #60a5fa; padding: 8px; font-size: 12px; border: 1px solid rgba(59,130,246,0.3); }
         .btn-edit:hover { background: rgba(59,130,246,0.3); }
-        
-        .btn-danger { flex: 1; background: rgba(239,68,68,0.15); color: #f87171; padding: 8px; font-size: 12px; border: 1px solid rgba(239,68,68,0.3); }
-        .btn-danger:hover { background: rgba(239,68,68,0.3); }
 
         /* --- MODAL UI --- */
         .modal-overlay {
@@ -124,8 +101,7 @@
         }
 
         .modal {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(255,255,255,0.1);
             border-radius: 20px; width: 100%; max-width: 420px; padding: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.6); max-height: 90vh; overflow-y: auto;
         }
@@ -149,26 +125,15 @@
 
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
         .btn-cancel { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
-        .btn-cancel:hover { background: rgba(255,255,255,0.1); }
 
         #toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
             padding: 10px 20px; border-radius: 30px; color: white; font-weight: 700;
-            z-index: 1100; display: none; text-align: center; font-size: 13px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            white-space: nowrap;
+            z-index: 1100; display: none; text-align: center; font-size: 13px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); white-space: nowrap;
         }
 
-        /* Desktop Layout Overrides */
-        @media (min-width: 768px) {
-            body { padding: 20px; }
-            .header { margin-bottom: 30px; }
-            .user-card { padding: 22px; }
-        }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        @media (min-width: 768px) { body { padding: 20px; } .header { margin-bottom: 30px; } .user-card { padding: 22px; } }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -187,56 +152,7 @@
     </div>
 
     <div class="user-grid" id="userGrid">
-        <div class="user-card">
-            <div class="card-header">
-                <div class="avatar">A</div>
-                <div class="user-meta">
-                    <div class="username">admin</div>
-                    <div class="badge-group">
-                        <span class="badge badge-admin">Admin</span>
-                        <span class="badge badge-status">Active</span>
-                    </div>
-                </div>
-            </div>
-            <div class="card-apps">
-                <div class="section-label">System Access</div>
-                <div class="app-item">
-                    <span class="app-name">All Applications</span>
-                    <span class="app-perms">Full Control</span>
-                </div>
-            </div>
-            <div class="card-actions">
-                <button class="btn btn-edit" onclick="showToast('Admin editing is restricted', 'error')">Edit Admin</button>
-            </div>
-        </div>
-
-        <div class="user-card">
-            <div class="card-header">
-                <div class="avatar" style="background: linear-gradient(135deg, #10b981, #059669);">S</div>
-                <div class="user-meta">
-                    <div class="username">student_01</div>
-                    <div class="badge-group">
-                        <span class="badge badge-user">User</span>
-                        <span class="badge badge-status">Active</span>
-                    </div>
-                </div>
-            </div>
-            <div class="card-apps">
-                <div class="section-label">Assigned Applications</div>
-                <div class="app-item">
-                    <span class="app-name">Tuition Manager</span>
-                    <span class="app-perms">View, Add</span>
-                </div>
-                <div class="app-item">
-                    <span class="app-name">MCQ Quiz Maker</span>
-                    <span class="app-perms">View</span>
-                </div>
-            </div>
-            <div class="card-actions">
-                <button class="btn btn-edit" onclick='openModal("edit", {"username":"student_01", "role":"User", "access":{"tuition-manager":["View", "Add"], "mcq-assessment":["View"]}})'>Edit Access</button>
-                <button class="btn btn-danger" onclick="showToast('Resetting password...', 'success')">Reset Pass</button>
-            </div>
-        </div>
+        <div style="color: #94a3b8; padding: 20px;">Fetching users from database...</div>
     </div>
 
     <div class="modal-overlay" id="userModal">
@@ -245,7 +161,7 @@
             
             <div class="form-group">
                 <label>Username</label>
-                <input type="text" id="m_username" class="form-control" placeholder="e.g., faculty_01">
+                <input type="text" id="m_username" class="form-control" placeholder="e.g., student_01">
             </div>
 
             <div class="form-group">
@@ -257,7 +173,7 @@
             </div>
 
             <div class="form-group" id="m_password_group">
-                <label>Temporary Password (For first login)</label>
+                <label id="m_password_label">Temporary Password (For first login)</label>
                 <input type="text" id="m_password" class="form-control" value="Welcome123">
             </div>
 
@@ -291,8 +207,11 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbw8zzUWvMskW21zeSAc0ClXYp75q9g5_wcHxlABs6CascdJYD7K0u4InmAjiVKy1fGlFA/exec';
+        const API_URL = 'https://script.google.com/macros/s/AKfycby3Mtence5PzA46V8RCWubEqHEzwI6DdtsXv_0mNaQZc77Ni_Fho9tPpc55yHPD8tZHhg/exec';
         
+        // Grab admin credentials from the parent dashboard window
+        const adminToken = localStorage.getItem('gs_token');
+        const adminUsername = localStorage.getItem('gs_username');
         let currentMode = 'add'; 
 
         function showToast(msg, type='success') {
@@ -303,29 +222,108 @@
             setTimeout(() => toast.style.display = 'none', 3000);
         }
 
+        // --- FETCH LIVE USERS ---
+        async function loadUsers() {
+            const grid = document.getElementById('userGrid');
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'get_users', adminUsername: adminUsername, adminToken: adminToken })
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    grid.innerHTML = ''; 
+                    result.users.forEach(user => {
+                        grid.appendChild(createUserCard(user));
+                    });
+                } else {
+                    grid.innerHTML = `<div style="color:#ef4444;">Error: ${result.message}</div>`;
+                }
+            } catch (error) {
+                grid.innerHTML = '<div style="color:#ef4444;">Network Error. Check connection.</div>';
+            }
+        }
+
+        // --- BUILD USER CARDS ---
+        function createUserCard(user) {
+            const card = document.createElement('div');
+            card.className = 'user-card';
+            
+            const badgeClass = user.role === 'Admin' ? 'badge-admin' : 'badge-user';
+            
+            // Handle different statuses
+            let statusClass = 'badge-status';
+            let statusText = user.status;
+            if (user.status === 'First_Login') { statusClass = 'badge-firstlogin'; statusText = 'Pending Setup'; }
+            if (user.status === 'Suspended') { statusClass = 'badge-admin'; }
+            
+            const avatarLetter = user.username.charAt(0).toUpperCase();
+            
+            let appsHtml = '';
+            if (user.role === 'Admin') {
+                appsHtml = `<div class="app-item"><span class="app-name">All Applications</span><span class="app-perms">Full Control</span></div>`;
+            } else if (Object.keys(user.access).length === 0) {
+                appsHtml = `<div class="app-item" style="color:#94a3b8; background: transparent;">No Apps Assigned</div>`;
+            } else {
+                for (const [appName, perms] of Object.entries(user.access)) {
+                    appsHtml += `<div class="app-item"><span class="app-name">${appName.replace('-', ' ').toUpperCase()}</span><span class="app-perms">${perms.join(', ')}</span></div>`;
+                }
+            }
+
+            const safeUserObj = JSON.stringify(user).replace(/'/g, "&#39;");
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="avatar">${avatarLetter}</div>
+                    <div class="user-meta">
+                        <div class="username">${user.username}</div>
+                        <div class="badge-group">
+                            <span class="badge ${badgeClass}">${user.role}</span>
+                            <span class="badge ${statusClass}">${statusText}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-apps">
+                    <div class="section-label">System Access</div>
+                    ${appsHtml}
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-edit" onclick='openModal("edit", ${safeUserObj})'>Edit User</button>
+                </div>
+            `;
+            return card;
+        }
+
+        // --- MODAL LOGIC ---
         function openModal(mode, userData = null) {
             currentMode = mode;
             const modal = document.getElementById('userModal');
-            const title = document.getElementById('modalTitle');
-            
             document.getElementById('m_username').value = '';
             document.getElementById('m_role').value = 'User';
-            document.getElementById('m_password').value = 'Welcome123';
+            document.getElementById('m_password').value = '';
             document.querySelectorAll('.perm-cb').forEach(cb => cb.checked = false);
 
             if (mode === 'add') {
-                title.innerText = "Add New User";
+                document.getElementById('modalTitle').innerText = "Add New User";
                 document.getElementById('m_username').disabled = false;
                 document.getElementById('m_password_group').style.display = 'block';
+                document.getElementById('m_password_label').innerText = "Temporary Password";
+                document.getElementById('m_password').value = 'Welcome123';
+                document.getElementById('m_password').placeholder = "";
             } else {
-                title.innerText = "Edit User Access";
+                document.getElementById('modalTitle').innerText = "Edit User";
                 document.getElementById('m_username').disabled = true;
-                document.getElementById('m_password_group').style.display = 'none'; 
+                document.getElementById('m_password_group').style.display = 'block'; 
+                document.getElementById('m_password_label').innerText = "Reset Password (Optional)";
+                document.getElementById('m_password').value = '';
+                document.getElementById('m_password').placeholder = "Leave blank to keep current password";
                 
                 document.getElementById('m_username').value = userData.username;
                 document.getElementById('m_role').value = userData.role;
                 
-                if (userData.access) {
+                if (userData.access && userData.role !== 'Admin') {
                     Object.keys(userData.access).forEach(app => {
                         userData.access[app].forEach(perm => {
                             const cb = document.querySelector(`.perm-cb[data-app="${app}"][value="${perm}"]`);
@@ -334,25 +332,70 @@
                     });
                 }
             }
-            
             togglePermissionsUI();
             modal.style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('userModal').style.display = 'none';
-        }
+        function closeModal() { document.getElementById('userModal').style.display = 'none'; }
 
         function togglePermissionsUI() {
-            const role = document.getElementById('m_role').value;
-            const permSection = document.getElementById('permissionsSection');
-            permSection.style.display = role === 'Admin' ? 'none' : 'block';
+            document.getElementById('permissionsSection').style.display = document.getElementById('m_role').value === 'Admin' ? 'none' : 'block';
         }
 
+        // --- SEND DATA TO APPS SCRIPT ---
         async function saveUser() {
-            showToast("System ready for API connection", "success");
-            setTimeout(closeModal, 1000);
+            const user = document.getElementById('m_username').value.trim();
+            const role = document.getElementById('m_role').value;
+            const pass = document.getElementById('m_password').value.trim();
+            
+            if (!user) return showToast("Username is required", "error");
+
+            let accessObj = {};
+            if (role === 'User') {
+                document.querySelectorAll('.perm-cb:checked').forEach(cb => {
+                    const app = cb.getAttribute('data-app');
+                    if (!accessObj[app]) accessObj[app] = [];
+                    accessObj[app].push(cb.value);
+                });
+            } else {
+                accessObj = { "all": ["Admin"] };
+            }
+
+            const payload = {
+                action: currentMode === 'add' ? 'create_user' : 'update_user',
+                adminUsername: adminUsername,
+                adminToken: adminToken,
+                targetUsername: user,
+                role: role,
+                accessJSON: JSON.stringify(accessObj),
+                tempPassword: pass
+            };
+
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerText = "Saving...";
+
+            try {
+                const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showToast(result.message, "success");
+                    closeModal();
+                    loadUsers(); // Refresh the grid to show new changes
+                } else {
+                    showToast(result.message, "error");
+                }
+            } catch (error) {
+                showToast("Network Error", "error");
+            }
+            
+            saveBtn.disabled = false;
+            saveBtn.innerText = "Save User";
         }
+
+        // Initialize App on Load
+        window.onload = loadUsers;
     </script>
 </body>
 </html>

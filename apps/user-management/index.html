@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>User Management</title>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: transparent; /* Inherits background from the dashboard iframe */
+            color: white;
+            padding: 10px;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+        }
+
+        .title { font-size: 22px; font-weight: 800; }
+
+        .btn {
+            border: none; border-radius: 12px; padding: 10px 16px;
+            font-size: 14px; font-weight: bold; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: 0.2s;
+        }
+        
+        .btn-primary { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-primary:active { transform: scale(0.95); }
+        
+        .btn-edit { background: rgba(59,130,246,0.2); color: #60a5fa; padding: 6px 12px; font-size: 12px; }
+        .btn-danger { background: rgba(239,68,68,0.2); color: #f87171; padding: 6px 12px; font-size: 12px; }
+
+        /* User Grid */
+        .user-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px;
+        }
+
+        .user-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; padding: 16px;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+
+        .user-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .username { font-size: 18px; font-weight: bold; }
+        .badge {
+            font-size: 10px; padding: 3px 8px; border-radius: 8px; font-weight: bold;
+        }
+        .badge-admin { background: rgba(220,38,38,0.3); color: #f87171; }
+        .badge-user { background: rgba(37,99,235,0.3); color: #60a5fa; }
+        .badge-status { background: rgba(16,185,129,0.3); color: #34d399; margin-top: 5px; display: inline-block;}
+        .badge-suspended { background: rgba(100,116,139,0.5); color: #cbd5e1; }
+
+        .card-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px;
+        }
+
+        .modal {
+            background: #0f172a; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px; width: 100%; max-width: 450px; padding: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto;
+        }
+
+        .modal-title { font-size: 18px; font-weight: bold; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px; font-weight: bold; }
+        .form-control {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            color: white; padding: 10px 12px; border-radius: 10px; outline: none;
+        }
+        .form-control:focus { border-color: #38bdf8; }
+
+        .app-permissions { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-bottom: 10px; }
+        .app-permissions h4 { font-size: 13px; color: #cbd5e1; margin-bottom: 8px; }
+        .checkbox-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .checkbox-label { display: flex; align-items: center; gap: 4px; font-size: 12px; cursor: pointer; }
+
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn-cancel { background: transparent; color: white; border: 1px solid rgba(255,255,255,0.2); }
+
+        #toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            padding: 10px 20px; border-radius: 12px; color: white; font-weight: bold;
+            z-index: 1100; display: none; text-align: center; font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast"></div>
+
+    <div class="header">
+        <div class="title">User Management</div>
+        <button class="btn btn-primary" onclick="openModal('add')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add New User
+        </button>
+    </div>
+
+    <!-- The Grid where users will load -->
+    <div class="user-grid" id="userGrid">
+        <div style="color: #94a3b8; font-size: 14px;">Loading users...</div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <div class="modal-title" id="modalTitle">Add New User</div>
+            
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="m_username" class="form-control" placeholder="e.g., student_01">
+            </div>
+
+            <div class="form-group">
+                <label>Role</label>
+                <select id="m_role" class="form-control" onchange="togglePermissionsUI()">
+                    <option value="User">Standard User</option>
+                    <option value="Admin">Administrator (Full Access)</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="m_password_group">
+                <label>Temporary Password (For first login)</label>
+                <input type="text" id="m_password" class="form-control" value="Welcome123">
+            </div>
+
+            <!-- App Permissions Section -->
+            <div id="permissionsSection">
+                <label style="font-size: 12px; color: #94a3b8; margin-bottom: 5px; display:block; font-weight: bold;">App Access & Permissions</label>
+                
+                <div class="app-permissions">
+                    <h4>Tuition Manager</h4>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" class="perm-cb" data-app="tuition-manager" value="View"> View</label>
+                        <label class="checkbox-label"><input type="checkbox" class="perm-cb" data-app="tuition-manager" value="Add"> Add</label>
+                        <label class="checkbox-label"><input type="checkbox" class="perm-cb" data-app="tuition-manager" value="Edit"> Edit</label>
+                    </div>
+                </div>
+
+                <div class="app-permissions">
+                    <h4>MCQ Quiz Maker</h4>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label"><input type="checkbox" class="perm-cb" data-app="mcq-assessment" value="View"> View</label>
+                        <label class="checkbox-label"><input type="checkbox" class="perm-cb" data-app="mcq-assessment" value="Add"> Add</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveUser()" id="saveBtn">Save User</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbw8zzUWvMskW21zeSAc0ClXYp75q9g5_wcHxlABs6CascdJYD7K0u4InmAjiVKy1fGlFA/exec';
+        
+        // Grab admin credentials from localStorage (since this iframe is on the same domain)
+        const adminToken = localStorage.getItem('gs_token');
+        const adminUsername = localStorage.getItem('gs_username');
+        
+        let currentMode = 'add'; // 'add' or 'edit'
+
+        function showToast(msg, type='success') {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.background = type === 'error' ? '#ef4444' : '#10b981';
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        // ==========================================
+        // UI TOGGLES
+        // ==========================================
+        function openModal(mode, userData = null) {
+            currentMode = mode;
+            const modal = document.getElementById('userModal');
+            const title = document.getElementById('modalTitle');
+            
+            // Reset form
+            document.getElementById('m_username').value = '';
+            document.getElementById('m_role').value = 'User';
+            document.getElementById('m_password').value = 'Welcome123';
+            document.querySelectorAll('.perm-cb').forEach(cb => cb.checked = false);
+
+            if (mode === 'add') {
+                title.innerText = "Add New User";
+                document.getElementById('m_username').disabled = false;
+                document.getElementById('m_password_group').style.display = 'block';
+            } else {
+                title.innerText = "Edit User Settings";
+                document.getElementById('m_username').disabled = true; // Don't let them change usernames easily
+                document.getElementById('m_password_group').style.display = 'none'; // Password resets handled via a different button
+                
+                // Populate data
+                document.getElementById('m_username').value = userData.username;
+                document.getElementById('m_role').value = userData.role;
+                
+                // Check the right boxes based on JSON
+                if (userData.access) {
+                    Object.keys(userData.access).forEach(app => {
+                        userData.access[app].forEach(perm => {
+                            const cb = document.querySelector(`.perm-cb[data-app="${app}"][value="${perm}"]`);
+                            if (cb) cb.checked = true;
+                        });
+                    });
+                }
+            }
+            
+            togglePermissionsUI();
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').style.display = 'none';
+        }
+
+        function togglePermissionsUI() {
+            const role = document.getElementById('m_role').value;
+            const permSection = document.getElementById('permissionsSection');
+            // Admins get everything, so hide the checkboxes
+            permSection.style.display = role === 'Admin' ? 'none' : 'block';
+        }
+
+        // ==========================================
+        // API COMMUNICATION (To be implemented)
+        // ==========================================
+        function loadUsers() {
+            // For now, we will render a placeholder until we update the Apps Script.
+            const grid = document.getElementById('userGrid');
+            grid.innerHTML = `
+                <div class="user-card">
+                    <div class="user-header">
+                        <div>
+                            <div class="username">student_01</div>
+                            <div class="badge badge-status">Active</div>
+                        </div>
+                        <div class="badge badge-user">User</div>
+                    </div>
+                    <div style="font-size: 12px; color: #94a3b8; margin-top: 10px;">
+                        Apps: Tuition Manager (View)
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-edit" onclick='openModal("edit", {"username":"student_01", "role":"User", "access":{"tuition-manager":["View"]}})'>Edit Access</button>
+                        <button class="btn btn-danger">Reset Pass</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function saveUser() {
+            const user = document.getElementById('m_username').value;
+            const role = document.getElementById('m_role').value;
+            const pass = document.getElementById('m_password').value;
+            
+            // Build the JSON Access Object
+            let accessObj = {};
+            if (role === 'User') {
+                document.querySelectorAll('.perm-cb:checked').forEach(cb => {
+                    const app = cb.getAttribute('data-app');
+                    const perm = cb.value;
+                    if (!accessObj[app]) accessObj[app] = [];
+                    accessObj[app].push(perm);
+                });
+            } else {
+                accessObj = { "all": ["Admin"] };
+            }
+
+            console.log("Data ready to send to Google Sheets:", {
+                action: currentMode === 'add' ? 'create_user' : 'update_user',
+                adminUsername: adminUsername,
+                adminToken: adminToken,
+                targetUsername: user,
+                role: role,
+                accessJSON: JSON.stringify(accessObj),
+                tempPassword: pass
+            });
+
+            showToast("User API Not Yet Wired up in Apps Script!", "error");
+            closeModal();
+        }
+
+        // Load dummy data on start
+        window.onload = loadUsers;
+    </script>
+</body>
+</html>

@@ -228,7 +228,7 @@
                 } else if (result.status === 'first_login') {
                     // Trigger the Password Reset UI
                     tempUsername = user;
-                    tempOldPassword = hashedPass; // We need to send this to prove we own the account
+                    tempOldPassword = rawPass; // We need to send this to prove we own the account
                     
                     document.getElementById('loginForm').style.display = 'none';
                     document.getElementById('firstLoginSection').style.display = 'block';

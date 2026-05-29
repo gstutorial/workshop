@@ -8,13 +8,13 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-        /* Force the dark theme to override the iframe's default background */
         body {
             font-family: Arial, sans-serif;
             background: radial-gradient(circle at top, #1e3a8a 0%, #0f172a 40%, #020617 100%);
             color: white;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px; /* Optimized padding for mobile */
+            overflow-x: hidden; /* Prevents any accidental horizontal scrolling */
         }
 
         /* --- HEADER --- */
@@ -22,17 +22,17 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center;
-            margin-bottom: 25px; 
+            margin-bottom: 20px; 
             flex-wrap: wrap; 
             gap: 15px;
         }
 
-        .title-group h2 { font-size: 22px; font-weight: 800; color: white; margin-bottom: 4px; }
-        .title-group p { font-size: 13px; color: #94a3b8; }
+        .title-group h2 { font-size: 20px; font-weight: 800; color: white; margin-bottom: 4px; }
+        .title-group p { font-size: 12px; color: #94a3b8; }
 
         .btn {
-            border: none; border-radius: 14px; padding: 12px 20px;
-            font-size: 14px; font-weight: bold; cursor: pointer;
+            border: none; border-radius: 12px; padding: 10px 16px;
+            font-size: 13px; font-weight: bold; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px; 
             transition: 0.2s;
         }
@@ -40,130 +40,135 @@
         .btn-primary { 
             background: linear-gradient(135deg, #10b981, #059669); 
             color: white; 
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
         }
         .btn-primary:active { transform: scale(0.95); }
 
         /* --- USER GRID & CARDS --- */
         .user-grid {
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-            gap: 20px;
+            /* THE FIX: min(100%, 280px) ensures it never overflows the screen on tiny devices */
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); 
+            gap: 15px;
         }
 
         .user-card {
             background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px; 
-            padding: 20px;
+            border-radius: 18px; 
+            padding: 18px;
             display: flex; 
             flex-direction: column; 
             gap: 15px;
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.25);
             transition: transform 0.2s;
         }
 
-        .user-card:hover { transform: translateY(-4px); }
+        .user-card:hover { transform: translateY(-3px); }
 
         /* Card Section 1: Identity */
         .card-header {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             border-bottom: 1px solid rgba(255,255,255,0.08);
-            padding-bottom: 15px;
+            padding-bottom: 12px;
         }
 
         .avatar {
-            width: 50px; height: 50px; border-radius: 50%;
+            width: 45px; height: 45px; border-radius: 50%;
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             display: flex; align-items: center; justify-content: center;
-            font-size: 20px; font-weight: 800; color: white;
+            font-size: 18px; font-weight: 800; color: white;
             box-shadow: 0 5px 15px rgba(59,130,246,0.4);
+            flex-shrink: 0;
         }
 
-        .user-meta { flex: 1; }
-        .username { font-size: 18px; font-weight: 700; color: white; margin-bottom: 5px; }
+        .user-meta { flex: 1; min-width: 0; }
+        .username { font-size: 16px; font-weight: 700; color: white; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        .badge-group { display: flex; gap: 8px; flex-wrap: wrap; }
-        .badge { font-size: 11px; padding: 4px 10px; border-radius: 10px; font-weight: 700; }
+        .badge-group { display: flex; gap: 6px; flex-wrap: wrap; }
+        .badge { font-size: 10px; padding: 3px 8px; border-radius: 8px; font-weight: 700; }
         .badge-admin { background: rgba(239,68,68,0.2); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
         .badge-user { background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
         .badge-status { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
 
         /* Card Section 2: Apps */
-        .card-apps {
-            flex: 1;
-        }
-        .section-label { font-size: 12px; color: #94a3b8; font-weight: 700; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .card-apps { flex: 1; }
+        .section-label { font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .app-item {
             background: rgba(0,0,0,0.2);
-            border-radius: 12px; padding: 10px 12px; margin-bottom: 8px;
+            border-radius: 10px; padding: 8px 10px; margin-bottom: 6px;
             display: flex; justify-content: space-between; align-items: center;
         }
-        .app-name { font-size: 14px; font-weight: 600; color: #e2e8f0; }
-        .app-perms { font-size: 11px; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; }
+        .app-name { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+        .app-perms { font-size: 10px; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 5px; }
 
         /* Card Section 3: Actions */
         .card-actions { 
-            display: flex; gap: 10px; margin-top: 5px; 
+            display: flex; gap: 8px; margin-top: 5px; 
         }
-        .btn-edit { flex: 1; background: rgba(59,130,246,0.15); color: #60a5fa; padding: 10px; font-size: 13px; border: 1px solid rgba(59,130,246,0.3); }
+        .btn-edit { flex: 1; background: rgba(59,130,246,0.15); color: #60a5fa; padding: 8px; font-size: 12px; border: 1px solid rgba(59,130,246,0.3); }
         .btn-edit:hover { background: rgba(59,130,246,0.3); }
         
-        .btn-danger { flex: 1; background: rgba(239,68,68,0.15); color: #f87171; padding: 10px; font-size: 13px; border: 1px solid rgba(239,68,68,0.3); }
+        .btn-danger { flex: 1; background: rgba(239,68,68,0.15); color: #f87171; padding: 8px; font-size: 12px; border: 1px solid rgba(239,68,68,0.3); }
         .btn-danger:hover { background: rgba(239,68,68,0.3); }
 
         /* --- MODAL UI --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(8px);
-            display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px;
+            display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px;
         }
 
         .modal {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 24px; width: 100%; max-width: 450px; padding: 30px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6); max-height: 90vh; overflow-y: auto;
+            border-radius: 20px; width: 100%; max-width: 420px; padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); max-height: 90vh; overflow-y: auto;
         }
 
-        .modal-title { font-size: 20px; font-weight: 800; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; }
 
-        .form-group { margin-bottom: 18px; }
-        .form-group label { display: block; font-size: 13px; color: #cbd5e1; margin-bottom: 8px; font-weight: 700; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 6px; font-weight: 700; }
         .form-control {
             width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15);
-            color: white; padding: 14px; border-radius: 12px; outline: none; font-size: 14px; transition: 0.3s;
+            color: white; padding: 12px; border-radius: 10px; outline: none; font-size: 14px; transition: 0.3s;
         }
         .form-control:focus { border-color: #3b82f6; background: rgba(0,0,0,0.5); }
-        
         select.form-control option { background: #0f172a; color: white; }
 
-        .app-permissions { background: rgba(0,0,0,0.2); padding: 15px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        .app-permissions h4 { font-size: 14px; color: #e2e8f0; margin-bottom: 12px; }
-        .checkbox-group { display: flex; gap: 15px; flex-wrap: wrap; }
-        .checkbox-label { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; color: #94a3b8; }
-        .checkbox-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: #3b82f6; cursor: pointer; }
+        .app-permissions { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .app-permissions h4 { font-size: 13px; color: #e2e8f0; margin-bottom: 10px; }
+        .checkbox-group { display: flex; gap: 12px; flex-wrap: wrap; }
+        .checkbox-label { display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; color: #94a3b8; }
+        .checkbox-label input[type="checkbox"] { width: 14px; height: 14px; accent-color: #3b82f6; cursor: pointer; }
 
-        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 30px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
         .btn-cancel { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
         .btn-cancel:hover { background: rgba(255,255,255,0.1); }
 
         #toast {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            padding: 12px 24px; border-radius: 50px; color: white; font-weight: 700;
-            z-index: 1100; display: none; text-align: center; font-size: 14px;
+            padding: 10px 20px; border-radius: 30px; color: white; font-weight: 700;
+            z-index: 1100; display: none; text-align: center; font-size: 13px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            white-space: nowrap;
         }
 
-        /* Custom Scrollbar for iframe */
-        ::-webkit-scrollbar { width: 8px; }
+        /* Desktop Layout Overrides */
+        @media (min-width: 768px) {
+            body { padding: 20px; }
+            .header { margin-bottom: 30px; }
+            .user-card { padding: 22px; }
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
@@ -176,7 +181,7 @@
             <p>Control system access, roles, and security.</p>
         </div>
         <button class="btn btn-primary" onclick="openModal('add')">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             Add New User
         </button>
     </div>
@@ -201,7 +206,7 @@
                 </div>
             </div>
             <div class="card-actions">
-                <button class="btn btn-edit" onclick="alert('Admin editing locked in demo')">Edit Admin</button>
+                <button class="btn btn-edit" onclick="showToast('Admin editing is restricted', 'error')">Edit Admin</button>
             </div>
         </div>
 
@@ -229,10 +234,9 @@
             </div>
             <div class="card-actions">
                 <button class="btn btn-edit" onclick='openModal("edit", {"username":"student_01", "role":"User", "access":{"tuition-manager":["View", "Add"], "mcq-assessment":["View"]}})'>Edit Access</button>
-                <button class="btn btn-danger" onclick="alert('Resetting password to plain text...')">Reset Pass</button>
+                <button class="btn btn-danger" onclick="showToast('Resetting password...', 'success')">Reset Pass</button>
             </div>
         </div>
-
     </div>
 
     <div class="modal-overlay" id="userModal">
@@ -258,7 +262,7 @@
             </div>
 
             <div id="permissionsSection">
-                <label style="font-size: 13px; color: #cbd5e1; margin-bottom: 10px; display:block; font-weight: 700;">App Access & Permissions</label>
+                <label style="font-size: 12px; color: #cbd5e1; margin-bottom: 8px; display:block; font-weight: 700;">App Access & Permissions</label>
                 
                 <div class="app-permissions">
                     <h4>Tuition Manager</h4>
@@ -289,8 +293,6 @@
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbw8zzUWvMskW21zeSAc0ClXYp75q9g5_wcHxlABs6CascdJYD7K0u4InmAjiVKy1fGlFA/exec';
         
-        const adminToken = localStorage.getItem('gs_token');
-        const adminUsername = localStorage.getItem('gs_username');
         let currentMode = 'add'; 
 
         function showToast(msg, type='success') {
@@ -348,31 +350,7 @@
         }
 
         async function saveUser() {
-            const user = document.getElementById('m_username').value;
-            const role = document.getElementById('m_role').value;
-            const pass = document.getElementById('m_password').value;
-            
-            let accessObj = {};
-            if (role === 'User') {
-                document.querySelectorAll('.perm-cb:checked').forEach(cb => {
-                    const app = cb.getAttribute('data-app');
-                    const perm = cb.value;
-                    if (!accessObj[app]) accessObj[app] = [];
-                    accessObj[app].push(perm);
-                });
-            } else {
-                accessObj = { "all": ["Admin"] };
-            }
-
-            console.log("Preparing to send:", {
-                action: currentMode === 'add' ? 'create_user' : 'update_user',
-                targetUsername: user,
-                role: role,
-                accessJSON: JSON.stringify(accessObj),
-                tempPassword: pass
-            });
-
-            showToast("UI is perfect! Waiting for backend connection.", "error");
+            showToast("System ready for API connection", "success");
             setTimeout(closeModal, 1000);
         }
     </script>

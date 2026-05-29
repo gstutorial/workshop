@@ -3,8 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <title>GS Secure Access Portal</title>
     
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo.png">
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <style>
@@ -42,11 +52,8 @@
         
         .logo {
             width: 80px; height: 80px;
-            background: linear-gradient(135deg, #2563eb, #06b6d4);
             border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            object-fit: contain;
             box-shadow: 0 10px 30px rgba(0,0,0,0.40);
             margin-bottom: 10px;
         }
@@ -94,7 +101,6 @@
         .primary-btn:active { transform: scale(0.97); }
         .primary-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-        /* Hidden by default until First Login is triggered */
         #firstLoginSection { display: none; }
         
         #toast {
@@ -110,6 +116,18 @@
             animation: spin 1s ease-in-out infinite; display: none;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        .creator-tag {
+            text-align: center; font-size: 13px; color: #94a3b8; margin-top: 25px; font-weight: 600;
+        }
+
+        .install-fab {
+            position: fixed; bottom: 20px; right: 20px;
+            background: linear-gradient(135deg, #10b981, #059669); color: white;
+            border: none; border-radius: 50px; padding: 14px 24px;
+            font-size: 15px; font-weight: 800; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            cursor: pointer; z-index: 1000; display: none; align-items: center; gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -119,12 +137,7 @@
     <div class="container" id="mainCard">
         
         <div class="logo-container">
-            <div class="logo">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-            </div>
+            <img src="logo.png" alt="GS Logo" class="logo" onerror="this.style.display='none'">
             <div class="title">GS Secure Portal</div>
             <div class="subtitle">Authorized Access Only</div>
         </div>
@@ -162,15 +175,48 @@
             </button>
         </form>
 
+        <div class="creator-tag">App Created By Gobind Sharma</div>
     </div>
 
+    <button id="installAppBtn" class="install-fab">📲 Install App</button>
+
     <script>
+        // ==========================================
+        // PWA INSTALL LOGIC
+        // ==========================================
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    reg.update();
+                });
+            });
+        }
+
+        let deferredPrompt;
+        const installBtn = document.getElementById('installAppBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'flex';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            installBtn.style.display = 'none';
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+        });
+
+        window.addEventListener('appinstalled', () => {
+            showToast('✅ App Installed Successfully!', 'success');
+        });
+
         // ==========================================
         // CONFIGURATION
         // ==========================================
         const API_URL = 'https://script.google.com/macros/s/AKfycbzrDF4NnweLHle-ODpPPCaTrymtiL0T-GR4oEqS6RQQxLIFBE6akzzKvk01TxkWCC9DKw/exec';
         
-        // Temporary storage for First Login flow
         let tempUsername = '';
         let tempOldPassword = '';
 
@@ -202,7 +248,6 @@
             const user = document.getElementById('username').value.trim();
             const rawPass = document.getElementById('password').value;
             
-            // Hash password client-side before sending
             const hashedPass = CryptoJS.SHA256(rawPass).toString();
             
             toggleLoading('loginBtn', 'loginSpinner', true);
@@ -216,24 +261,21 @@
                 const result = await response.json();
 
                 if (result.status === 'success') {
-                    // Store secure data in browser LocalStorage
                     localStorage.setItem('gs_token', result.token);
                     localStorage.setItem('gs_username', user);
                     localStorage.setItem('gs_role', result.role);
                     localStorage.setItem('gs_access', JSON.stringify(result.access));
                     
-                    // Redirect to the Dashboard
                     window.location.href = 'dashboard.html';
 
                 } else if (result.status === 'first_login') {
-                    // Trigger the Password Reset UI
                     tempUsername = user;
-                    tempOldPassword = rawPass; // We need to send this to prove we own the account
+                    tempOldPassword = rawPass; // Correctly storing raw pass for verification
                     
                     document.getElementById('loginForm').style.display = 'none';
                     document.getElementById('firstLoginSection').style.display = 'block';
-                    document.getElementById('mainCard').style.animation = 'none'; // Reset animation
-                    document.getElementById('mainCard').offsetHeight; // Trigger reflow
+                    document.getElementById('mainCard').style.animation = 'none';
+                    document.getElementById('mainCard').offsetHeight; 
                     document.getElementById('mainCard').style.animation = 'fadeIn 0.4s ease-out';
                     
                 } else {
@@ -277,12 +319,11 @@
                 if (result.status === 'success') {
                     showToast("Password Updated! Logging you in...", "success");
                     
-                    // Automatically log them in with the new password
                     document.getElementById('password').value = newPass;
                     setTimeout(() => {
                         document.getElementById('loginForm').style.display = 'block';
                         document.getElementById('firstLoginSection').style.display = 'none';
-                        attemptLogin(new Event('submit')); // Trigger the login function again
+                        attemptLogin(new Event('submit')); 
                     }, 1500);
                 } else {
                     showToast(result.message);
@@ -294,7 +335,6 @@
             toggleLoading('resetBtn', 'resetSpinner', false);
         }
 
-        // Auto-redirect if already logged in (Simple check, dashboard will do the hard verify)
         window.onload = () => {
             if (localStorage.getItem('gs_token')) {
                 window.location.href = 'dashboard.html';

@@ -11,19 +11,25 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         
-        /* STRICT MOBILE LOCK: Anchors iframe perfectly, stopping address bar glitches */
+        /* THE ULTIMATE MOBILE LOCK: 100dvh accounts for mobile browser address bars */
         html, body { 
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            width: 100%; height: 100%; overflow: hidden; background: transparent; color: white;
+            height: 100vh; /* Fallback for older browsers */
+            height: 100dvh; /* Dynamic viewport height */
+            margin: 0; overflow: hidden; background: transparent; color: white;
         }
 
-        .app-container { display: flex; flex-direction: column; height: 100%; width: 100%; }
+        .app-container { 
+            display: flex; flex-direction: column; 
+            height: 100%; width: 100%; overflow: hidden;
+        }
 
         /* --- MAIN SCROLLABLE VIEW AREA --- */
         .view-container { 
-            flex: 1; overflow-y: auto; padding: 15px; position: relative; z-index: 1; 
+            flex: 1; /* Takes up all space minus the bottom nav */
+            overflow-y: auto; padding: 15px; position: relative; z-index: 1; 
             -webkit-overflow-scrolling: touch; /* Smooth scroll on iPhones/Androids */
         }
+        
         .view-section { display: none; animation: fadeIn 0.3s ease; }
         .view-section.active { display: block; }
 
@@ -76,7 +82,7 @@
         .class-group.active .class-content { display: block; animation: slideDown 0.3s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- STUDENT CARDS (Classic Layout Restored) --- */
+        /* --- STUDENT CARDS --- */
         .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
         
         .student-card {
@@ -99,8 +105,7 @@
         }
         .s-fee-due { background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
 
-        /* Action Buttons Horizontal on Right */
-        .s-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .s-actions { display: flex; gap: 8px; flex-shrink: 0; }
         .action-icon {
             width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
             text-decoration: none; color: white; transition: 0.2s; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
@@ -136,29 +141,8 @@
         .p-data-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
         .p-data-label { color: #94a3b8; }
 
-        /* --- MODALS --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
-            display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
-        }
-        .modal {
-            background: #0f172a; width: 100%; max-width: 450px; border-radius: 20px; padding: 25px;
-            max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-        }
-
-        .custom-dialog {
-            background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 25px;
-            width: 100%; max-width: 350px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .dialog-icon { margin-bottom: 15px; display: inline-flex; padding: 15px; border-radius: 50%; }
-        .icon-warning { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .icon-success { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-        .custom-dialog h3 { font-size: 20px; font-weight: 800; margin-bottom: 10px; color: white; }
-        .custom-dialog p { font-size: 14px; color: #94a3b8; margin-bottom: 25px; line-height: 1.5; }
-        .dialog-actions { display: flex; gap: 10px; }
-        .dialog-actions .btn { flex: 1; justify-content: center; }
-
+        /* --- MODAL FORMS --- */
+        .modal { background: #0f172a; width: 100%; max-width: 450px; border-radius: 20px; padding: 25px; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .profile-upload-container { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
         .profile-preview { width: 80px; height: 80px; border-radius: 50%; background: rgba(0,0,0,0.3); border: 2px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: 0.3s; }
         .profile-preview:hover { border-color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
@@ -203,7 +187,7 @@
 
             <div id="view-profile" class="view-section">
                 <div class="header-bar">
-                    <button class="btn" style="background: rgba(255,255,255,0.1); padding: 8px 12px;" onclick="switchTab('students')">← Back</button>
+                    <button class="btn" style="background: rgba(255,255,255,0.1); padding: 8px 12px;" onclick="switchTab('students', document.getElementById('navDir'))">← Back</button>
                     <div style="display: flex; gap: 8px;">
                         <button class="btn btn-danger" id="adminDeleteBtn" onclick="deleteStudent()" style="display: none;" title="Delete Student">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
@@ -252,9 +236,7 @@
             <div id="view-attendance" class="view-section"><div class="header-bar"><h2>Attendance Hub</h2></div><p style="text-align:center; color:#94a3b8; margin-top:50px;">Coming in Phase 2</p></div>
             <div id="view-fees" class="view-section"><div class="header-bar"><h2>Fee Collections</h2></div><p style="text-align:center; color:#94a3b8; margin-top:50px;">Coming in Phase 3</p></div>
             <div id="view-exams" class="view-section"><div class="header-bar"><h2>Examination Records</h2></div><p style="text-align:center; color:#94a3b8; margin-top:50px;">Coming in Phase 4</p></div>
-        </div>
-
-        <nav class="app-nav">
+        </div> <nav class="app-nav">
             <div class="nav-item active" onclick="switchTab('students', this)" id="navDir">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                 <span id="navDirText">Directory</span>
@@ -272,18 +254,7 @@
                 <span>Exams</span>
             </div>
         </nav>
-    </div>
-
-    <div class="custom-dialog-overlay" id="customDialogOverlay" style="display: none;">
-        <div class="custom-dialog">
-            <div id="dialogIcon"></div>
-            <h3 id="dialogTitle">Title</h3>
-            <p id="dialogMessage">Message</p>
-            <div class="dialog-actions" id="dialogActions"></div>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="cropModal" style="display: none;">
+    </div> <div class="modal-overlay" id="cropModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; justify-content: center; align-items: center; padding: 15px;">
         <div class="modal">
             <h3 style="margin-bottom: 15px; color: white;">Adjust Profile Photo</h3>
             <div class="cropper-container">
@@ -296,7 +267,7 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="studentModal" onclick="if(event.target===this) closeStudentModal()" style="display: none;">
+    <div class="modal-overlay" id="studentModal" onclick="if(event.target===this) closeStudentModal()" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 15px;">
         <div class="modal">
             <h2 style="margin-bottom: 20px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;" id="modalTitle">Add New Student</h2>
             
@@ -321,18 +292,31 @@
                 <div class="form-group" style="flex: 1;"><label>Joining Date</label><input type="date" id="stuJoinDate" class="form-control"></div>
                 <div class="form-group" style="flex: 1;"><label>Mobile No.</label><input type="tel" id="stuMobile" class="form-control" placeholder="10-digit number"></div>
             </div>
+            
             <div class="form-group"><label>School Name</label><input type="text" id="stuSchool" class="form-control" placeholder="School Name"></div>
             <div class="form-group"><label>Home Address</label><input type="text" id="stuAddress" class="form-control" placeholder="Full Address"></div>
 
             <div class="form-group" id="statusGroup" style="display: none;">
                 <label>Enrollment Status</label>
-                <select id="stuStatus" class="form-control"><option value="Active">Active Student</option><option value="Inactive">Inactive / Left</option></select>
+                <select id="stuStatus" class="form-control">
+                    <option value="Active">Active Student</option>
+                    <option value="Inactive">Inactive / Left</option>
+                </select>
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px;">
                 <button class="btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);" onclick="closeStudentModal()">Cancel</button>
                 <button class="btn btn-success" id="saveStudentBtn" onclick="saveStudent()">Save Student</button>
             </div>
+        </div>
+    </div>
+
+    <div class="custom-dialog-overlay" id="customDialogOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+        <div class="custom-dialog">
+            <div id="dialogIcon"></div>
+            <h3 id="dialogTitle">Title</h3>
+            <p id="dialogMessage">Message</p>
+            <div class="dialog-actions" id="dialogActions"></div>
         </div>
     </div>
 
@@ -585,13 +569,32 @@
             }
 
             btn.innerText = "Saving..."; btn.disabled = true;
+            
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const result = await response.json();
-                if (result.status === 'success') { await showCustomAlert("Success", result.message, "success"); closeStudentModal(); fetchStudents(); } 
-                else { await showCustomAlert("Error", result.message, "error"); }
-            } catch (error) { await showCustomAlert("Network Error", "Failed to save.", "error"); }
-            btn.innerText = originalText; btn.disabled = false;
+                const textResponse = await response.text(); // Read raw text to prevent silent JSON parse crash
+                
+                let result;
+                try {
+                    result = JSON.parse(textResponse);
+                } catch (e) {
+                    console.error("JSON Parse Error. Server returned:", textResponse);
+                    await showCustomAlert("Saved with Warnings", "Student was likely saved, but the server sent back an unusual response. Refreshing...", "warning");
+                    closeStudentModal(); fetchStudents();
+                    return;
+                }
+
+                if (result.status === 'success') { 
+                    await showCustomAlert("Success", result.message, "success"); 
+                    closeStudentModal(); fetchStudents(); 
+                } else { 
+                    await showCustomAlert("Error", result.message, "error"); 
+                }
+            } catch (error) { 
+                await showCustomAlert("Network Error", "Failed to communicate with server.", "error"); 
+            } finally {
+                btn.innerText = originalText; btn.disabled = false;
+            }
         }
 
         async function deleteStudent() {

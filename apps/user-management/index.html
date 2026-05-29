@@ -38,6 +38,7 @@
             box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
         }
         .btn-primary:active { transform: scale(0.95); }
+        .btn-danger-solid { background: linear-gradient(135deg, #ef4444, #dc2626); color: white; box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3); }
 
         /* --- USER GRID & CARDS --- */
         .user-grid {
@@ -57,16 +58,13 @@
         .user-card:hover { transform: translateY(-3px); }
 
         .card-header {
-            display: flex; align-items: center; gap: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;
         }
-
+        .header-left { display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0; }
+        
         .avatar {
-            width: 45px; height: 45px; border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; font-weight: 800; color: white;
-            box-shadow: 0 5px 15px rgba(59,130,246,0.4); flex-shrink: 0;
+            width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #2563eb);
+            display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: white; flex-shrink: 0;
         }
 
         .user-meta { flex: 1; min-width: 0; }
@@ -78,25 +76,27 @@
         .badge-user { background: rgba(59,130,246,0.2); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
         .badge-status { background: rgba(16,185,129,0.2); color: #34d399; border: 1px solid rgba(16,185,129,0.3); }
         .badge-firstlogin { background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }
+        .badge-suspended { background: rgba(100,116,139,0.5); color: #cbd5e1; border: 1px solid rgba(100,116,139,0.8); }
 
-        .card-apps { flex: 1; }
+        .toggle-arrow { transition: transform 0.3s ease; color: #cbd5e1; flex-shrink: 0; padding-left: 8px; }
+        .rotate-arrow { transform: rotate(180deg); }
+
+        /* The hidden collapsible part */
+        .card-collapsible { display: none; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 15px; }
+
         .section-label { font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-        
         .app-item {
-            background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px 10px; margin-bottom: 6px;
-            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.2); border-radius: 10px; padding: 8px 10px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center;
         }
-        .app-name { font-size: 13px; font-weight: 600; color: #e2e8f0; }
+        .app-name { font-size: 12px; font-weight: 600; color: #e2e8f0; }
         .app-perms { font-size: 10px; color: #cbd5e1; background: rgba(255,255,255,0.1); padding: 3px 6px; border-radius: 5px; }
 
-        .card-actions { display: flex; gap: 8px; margin-top: 5px; }
+        .card-actions { display: flex; gap: 8px; margin-top: 10px; }
         .btn-edit { flex: 1; background: rgba(59,130,246,0.15); color: #60a5fa; padding: 8px; font-size: 12px; border: 1px solid rgba(59,130,246,0.3); }
-        .btn-edit:hover { background: rgba(59,130,246,0.3); }
 
         /* --- MODAL UI --- */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(8px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(8px);
             display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px;
         }
 
@@ -123,16 +123,17 @@
         .checkbox-label { display: flex; align-items: center; gap: 6px; font-size: 12px; cursor: pointer; color: #94a3b8; }
         .checkbox-label input[type="checkbox"] { width: 14px; height: 14px; accent-color: #3b82f6; cursor: pointer; }
 
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px; }
+        .modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; }
+        .action-right { display: flex; gap: 10px; }
         .btn-cancel { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
 
         #toast {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            padding: 10px 20px; border-radius: 30px; color: white; font-weight: 700;
-            z-index: 1100; display: none; text-align: center; font-size: 13px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); white-space: nowrap;
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 30px; 
+            color: white; font-weight: 700; z-index: 1100; display: none; text-align: center; font-size: 13px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); white-space: nowrap;
         }
 
-        @media (min-width: 768px) { body { padding: 20px; } .header { margin-bottom: 30px; } .user-card { padding: 22px; } }
+        @media (min-width: 768px) { body { padding: 20px; } .header { margin-bottom: 30px; } }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 </head>
@@ -172,14 +173,21 @@
                 </select>
             </div>
 
+            <div class="form-group" id="m_status_group" style="display: none;">
+                <label>Account Status</label>
+                <select id="m_status" class="form-control">
+                    <option value="Active">Active</option>
+                    <option value="Suspended">Suspended (No Access)</option>
+                </select>
+            </div>
+
             <div class="form-group" id="m_password_group">
-                <label id="m_password_label">Temporary Password (For first login)</label>
+                <label id="m_password_label">Temporary Password</label>
                 <input type="text" id="m_password" class="form-control" value="Welcome123">
             </div>
 
             <div id="permissionsSection">
                 <label style="font-size: 12px; color: #cbd5e1; margin-bottom: 8px; display:block; font-weight: 700;">App Access & Permissions</label>
-                
                 <div class="app-permissions">
                     <h4>Tuition Manager</h4>
                     <div class="checkbox-group">
@@ -189,7 +197,6 @@
                         <label class="checkbox-label"><input type="checkbox" class="perm-cb" data-app="tuition-manager" value="Delete"> Delete</label>
                     </div>
                 </div>
-
                 <div class="app-permissions">
                     <h4>MCQ Quiz Maker</h4>
                     <div class="checkbox-group">
@@ -200,19 +207,26 @@
             </div>
 
             <div class="modal-actions">
-                <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveUser()" id="saveBtn">Save User</button>
+                <button class="btn btn-danger-solid" id="btnDeleteUser" style="display: none;" onclick="deleteUser()">Delete User</button>
+                <div class="action-right">
+                    <button class="btn btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-primary" onclick="saveUser()" id="saveBtn">Save User</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <script src="../../config.js"></script>
+
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycby3Mtence5PzA46V8RCWubEqHEzwI6DdtsXv_0mNaQZc77Ni_Fho9tPpc55yHPD8tZHhg/exec';
+        // PULL API URL FROM CONFIG.JS
+        const API_URL = GS_CONFIG.API_URL;
         
-        // Grab admin credentials from the parent dashboard window
         const adminToken = localStorage.getItem('gs_token');
         const adminUsername = localStorage.getItem('gs_username');
+        
         let currentMode = 'add'; 
+        let editOldUsername = ''; 
 
         function showToast(msg, type='success') {
             const toast = document.getElementById('toast');
@@ -222,42 +236,30 @@
             setTimeout(() => toast.style.display = 'none', 3000);
         }
 
-        // --- FETCH LIVE USERS ---
         async function loadUsers() {
             const grid = document.getElementById('userGrid');
-
             try {
                 const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'get_users', adminUsername: adminUsername, adminToken: adminToken })
+                    method: 'POST', body: JSON.stringify({ action: 'get_users', adminUsername: adminUsername, adminToken: adminToken })
                 });
                 const result = await response.json();
-
                 if (result.status === 'success') {
                     grid.innerHTML = ''; 
-                    result.users.forEach(user => {
-                        grid.appendChild(createUserCard(user));
-                    });
-                } else {
-                    grid.innerHTML = `<div style="color:#ef4444;">Error: ${result.message}</div>`;
-                }
-            } catch (error) {
-                grid.innerHTML = '<div style="color:#ef4444;">Network Error. Check connection.</div>';
-            }
+                    result.users.forEach(user => grid.appendChild(createUserCard(user)));
+                } else { grid.innerHTML = `<div style="color:#ef4444;">Error: ${result.message}</div>`; }
+            } catch (error) { grid.innerHTML = '<div style="color:#ef4444;">Network Error. Check connection.</div>'; }
         }
 
-        // --- BUILD USER CARDS ---
         function createUserCard(user) {
             const card = document.createElement('div');
             card.className = 'user-card';
             
             const badgeClass = user.role === 'Admin' ? 'badge-admin' : 'badge-user';
             
-            // Handle different statuses
             let statusClass = 'badge-status';
             let statusText = user.status;
             if (user.status === 'First_Login') { statusClass = 'badge-firstlogin'; statusText = 'Pending Setup'; }
-            if (user.status === 'Suspended') { statusClass = 'badge-admin'; }
+            if (user.status === 'Suspended') { statusClass = 'badge-suspended'; }
             
             const avatarLetter = user.username.charAt(0).toUpperCase();
             
@@ -275,53 +277,75 @@
             const safeUserObj = JSON.stringify(user).replace(/'/g, "&#39;");
 
             card.innerHTML = `
-                <div class="card-header">
-                    <div class="avatar">${avatarLetter}</div>
-                    <div class="user-meta">
-                        <div class="username">${user.username}</div>
-                        <div class="badge-group">
-                            <span class="badge ${badgeClass}">${user.role}</span>
-                            <span class="badge ${statusClass}">${statusText}</span>
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="header-left">
+                        <div class="avatar">${avatarLetter}</div>
+                        <div class="user-meta">
+                            <div class="username">${user.username}</div>
+                            <div class="badge-group">
+                                <span class="badge ${badgeClass}">${user.role}</span>
+                                <span class="badge ${statusClass}">${statusText}</span>
+                            </div>
                         </div>
                     </div>
+                    <div class="toggle-arrow">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </div>
                 </div>
-                <div class="card-apps">
-                    <div class="section-label">System Access</div>
-                    ${appsHtml}
-                </div>
-                <div class="card-actions">
-                    <button class="btn btn-edit" onclick='openModal("edit", ${safeUserObj})'>Edit User</button>
+                <div class="card-collapsible">
+                    <div class="card-apps">
+                        <div class="section-label">System Access</div>
+                        ${appsHtml}
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-edit" onclick='event.stopPropagation(); openModal("edit", ${safeUserObj})'>Edit User</button>
+                    </div>
                 </div>
             `;
             return card;
         }
 
-        // --- MODAL LOGIC ---
+        function toggleCard(headerElement) {
+            const content = headerElement.nextElementSibling;
+            const arrow = headerElement.querySelector('.toggle-arrow');
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+                arrow.classList.remove('rotate-arrow');
+            } else {
+                content.style.display = 'block';
+                arrow.classList.add('rotate-arrow');
+            }
+        }
+
         function openModal(mode, userData = null) {
             currentMode = mode;
             const modal = document.getElementById('userModal');
             document.getElementById('m_username').value = '';
             document.getElementById('m_role').value = 'User';
+            document.getElementById('m_status').value = 'Active';
             document.getElementById('m_password').value = '';
             document.querySelectorAll('.perm-cb').forEach(cb => cb.checked = false);
 
             if (mode === 'add') {
                 document.getElementById('modalTitle').innerText = "Add New User";
-                document.getElementById('m_username').disabled = false;
-                document.getElementById('m_password_group').style.display = 'block';
+                document.getElementById('m_status_group').style.display = 'none';
+                document.getElementById('btnDeleteUser').style.display = 'none';
                 document.getElementById('m_password_label').innerText = "Temporary Password";
                 document.getElementById('m_password').value = 'Welcome123';
                 document.getElementById('m_password').placeholder = "";
             } else {
+                editOldUsername = userData.username; 
                 document.getElementById('modalTitle').innerText = "Edit User";
-                document.getElementById('m_username').disabled = true;
-                document.getElementById('m_password_group').style.display = 'block'; 
+                document.getElementById('m_status_group').style.display = 'block';
+                
+                document.getElementById('btnDeleteUser').style.display = userData.username === adminUsername ? 'none' : 'block';
+
                 document.getElementById('m_password_label').innerText = "Reset Password (Optional)";
-                document.getElementById('m_password').value = '';
                 document.getElementById('m_password').placeholder = "Leave blank to keep current password";
                 
                 document.getElementById('m_username').value = userData.username;
                 document.getElementById('m_role').value = userData.role;
+                document.getElementById('m_status').value = userData.status === 'Suspended' ? 'Suspended' : 'Active';
                 
                 if (userData.access && userData.role !== 'Admin') {
                     Object.keys(userData.access).forEach(app => {
@@ -337,18 +361,15 @@
         }
 
         function closeModal() { document.getElementById('userModal').style.display = 'none'; }
+        function togglePermissionsUI() { document.getElementById('permissionsSection').style.display = document.getElementById('m_role').value === 'Admin' ? 'none' : 'block'; }
 
-        function togglePermissionsUI() {
-            document.getElementById('permissionsSection').style.display = document.getElementById('m_role').value === 'Admin' ? 'none' : 'block';
-        }
-
-        // --- SEND DATA TO APPS SCRIPT ---
         async function saveUser() {
-            const user = document.getElementById('m_username').value.trim();
+            const newUsername = document.getElementById('m_username').value.trim();
             const role = document.getElementById('m_role').value;
+            const status = document.getElementById('m_status').value;
             const pass = document.getElementById('m_password').value.trim();
             
-            if (!user) return showToast("Username is required", "error");
+            if (!newUsername) return showToast("Username is required", "error");
 
             let accessObj = {};
             if (role === 'User') {
@@ -357,44 +378,48 @@
                     if (!accessObj[app]) accessObj[app] = [];
                     accessObj[app].push(cb.value);
                 });
-            } else {
-                accessObj = { "all": ["Admin"] };
-            }
+            } else { accessObj = { "all": ["Admin"] }; }
 
             const payload = {
                 action: currentMode === 'add' ? 'create_user' : 'update_user',
-                adminUsername: adminUsername,
-                adminToken: adminToken,
-                targetUsername: user,
-                role: role,
-                accessJSON: JSON.stringify(accessObj),
-                tempPassword: pass
+                adminUsername: adminUsername, adminToken: adminToken,
+                targetUsername: currentMode === 'add' ? newUsername : undefined, 
+                oldUsername: currentMode === 'edit' ? editOldUsername : undefined, 
+                newUsername: currentMode === 'edit' ? newUsername : undefined,     
+                role: role, status: status, accessJSON: JSON.stringify(accessObj), tempPassword: pass
             };
 
             const saveBtn = document.getElementById('saveBtn');
-            saveBtn.disabled = true;
-            saveBtn.innerText = "Saving...";
+            saveBtn.disabled = true; saveBtn.innerText = "Saving...";
 
             try {
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const result = await response.json();
-
                 if (result.status === 'success') {
                     showToast(result.message, "success");
-                    closeModal();
-                    loadUsers(); // Refresh the grid to show new changes
-                } else {
-                    showToast(result.message, "error");
-                }
-            } catch (error) {
-                showToast("Network Error", "error");
-            }
+                    closeModal(); loadUsers();
+                } else { showToast(result.message, "error"); }
+            } catch (error) { showToast("Network Error", "error"); }
             
-            saveBtn.disabled = false;
-            saveBtn.innerText = "Save User";
+            saveBtn.disabled = false; saveBtn.innerText = "Save User";
         }
 
-        // Initialize App on Load
+        async function deleteUser() {
+            if (!confirm(`Are you sure you want to permanently delete '${editOldUsername}'? This cannot be undone.`)) return;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST', 
+                    body: JSON.stringify({ action: 'delete_user', adminUsername: adminUsername, adminToken: adminToken, targetUsername: editOldUsername })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    showToast(result.message, "success");
+                    closeModal(); loadUsers();
+                } else { showToast(result.message, "error"); }
+            } catch (error) { showToast("Network Error", "error"); }
+        }
+
         window.onload = loadUsers;
     </script>
 </body>

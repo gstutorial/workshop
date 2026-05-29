@@ -50,28 +50,24 @@
 
         .logo-container { text-align: center; margin-bottom: 20px; }
         
+        /* Updated Logo: Clean, no circle, no shadow */
         .logo {
-            width: 80px; height: 80px;
-            border-radius: 50%;
+            height: 75px; 
+            width: auto;
+            max-width: 100%;
             object-fit: contain;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.40);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
-        .title {
-            text-align: center; font-size: 24px; font-weight: 800;
-        }
-
-        .subtitle {
-            text-align: center; color: #cbd5e1; font-size: 14px; margin-top: 8px; margin-bottom: 25px;
-        }
+        .title { text-align: center; font-size: 24px; font-weight: 800; }
+        .subtitle { text-align: center; color: #cbd5e1; font-size: 14px; margin-top: 8px; margin-bottom: 25px; }
 
         .input-group { margin-bottom: 15px; }
-        
-        .input-group label {
-            display: block; font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 5px;
-        }
+        .input-group label { display: block; font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 5px; }
 
+        /* Password Wrapper for Eye Icon */
+        .password-wrapper { position: relative; display: flex; align-items: center; }
+        
         .input-field {
             width: 100%;
             background: rgba(255, 255, 255, 0.06);
@@ -84,10 +80,16 @@
             transition: 0.3s;
         }
 
-        .input-field:focus {
-            border-color: #38bdf8;
-            background: rgba(255, 255, 255, 0.1);
+        .password-wrapper .input-field { padding-right: 45px; /* Room for icon */ }
+
+        .input-field:focus { border-color: #38bdf8; background: rgba(255, 255, 255, 0.1); }
+
+        .eye-btn {
+            position: absolute; right: 15px; background: none; border: none;
+            color: #94a3b8; cursor: pointer; display: flex; align-items: center;
+            justify-content: center; padding: 0; transition: color 0.2s;
         }
+        .eye-btn:hover { color: white; }
 
         .primary-btn {
             width: 100%; border: none; border-radius: 16px; padding: 15px;
@@ -117,9 +119,7 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .creator-tag {
-            text-align: center; font-size: 13px; color: #94a3b8; margin-top: 25px; font-weight: 600;
-        }
+        .creator-tag { text-align: center; font-size: 13px; color: #94a3b8; margin-top: 25px; font-weight: 600; }
 
         .install-fab {
             position: fixed; bottom: 20px; right: 20px;
@@ -147,10 +147,19 @@
                 <label>Username</label>
                 <input type="text" id="username" class="input-field" required autocomplete="username">
             </div>
+            
             <div class="input-group">
                 <label>Password</label>
-                <input type="password" id="password" class="input-field" required autocomplete="current-password">
+                <div class="password-wrapper">
+                    <input type="password" id="password" class="input-field" required autocomplete="current-password">
+                    <button type="button" class="eye-btn" onclick="toggleVisibility('password', 'eyeIconMain')">
+                        <svg id="eyeIconMain" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
             </div>
+
             <button type="submit" class="primary-btn" id="loginBtn">
                 <span>Sign In</span>
                 <div class="spinner" id="loginSpinner"></div>
@@ -161,14 +170,31 @@
             <div class="subtitle" style="color: #fbbf24; font-weight: bold;">
                 Action Required: Please set a new, permanent password to continue.
             </div>
+            
             <div class="input-group">
                 <label>New Password</label>
-                <input type="password" id="newPassword" class="input-field" required minlength="6">
+                <div class="password-wrapper">
+                    <input type="password" id="newPassword" class="input-field" required minlength="6">
+                    <button type="button" class="eye-btn" onclick="toggleVisibility('newPassword', 'eyeIconNew')">
+                        <svg id="eyeIconNew" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
             </div>
+
             <div class="input-group">
                 <label>Confirm New Password</label>
-                <input type="password" id="confirmPassword" class="input-field" required minlength="6">
+                <div class="password-wrapper">
+                    <input type="password" id="confirmPassword" class="input-field" required minlength="6">
+                    <button type="button" class="eye-btn" onclick="toggleVisibility('confirmPassword', 'eyeIconConfirm')">
+                        <svg id="eyeIconConfirm" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
             </div>
+
             <button type="submit" class="primary-btn" id="resetBtn">
                 <span>Save & Login</span>
                 <div class="spinner" id="resetSpinner"></div>
@@ -179,6 +205,8 @@
     </div>
 
     <button id="installAppBtn" class="install-fab">📲 Install App</button>
+
+    <script src="config.js"></script>
 
     <script>
         // ==========================================
@@ -208,15 +236,10 @@
             deferredPrompt = null;
         });
 
-        window.addEventListener('appinstalled', () => {
-            showToast('✅ App Installed Successfully!', 'success');
-        });
-
         // ==========================================
         // CONFIGURATION
         // ==========================================
-        const API_URL = 'https://script.google.com/macros/s/AKfycby3Mtence5PzA46V8RCWubEqHEzwI6DdtsXv_0mNaQZc77Ni_Fho9tPpc55yHPD8tZHhg/exec';
-        
+        const API_URL = GS_CONFIG.API_URL;
         let tempUsername = '';
         let tempOldPassword = '';
 
@@ -237,6 +260,22 @@
             btn.disabled = isLoading;
             spinner.style.display = isLoading ? 'block' : 'none';
             btn.querySelector('span').style.display = isLoading ? 'none' : 'block';
+        }
+
+        // Toggle Password Eye Icon Function
+        function toggleVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                // Eye-Off SVG Path
+                icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>`;
+            } else {
+                input.type = 'password';
+                // Eye SVG Path
+                icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>`;
+            }
         }
 
         // ==========================================
@@ -270,7 +309,7 @@
 
                 } else if (result.status === 'first_login') {
                     tempUsername = user;
-                    tempOldPassword = rawPass; // Correctly storing raw pass for verification
+                    tempOldPassword = rawPass; 
                     
                     document.getElementById('loginForm').style.display = 'none';
                     document.getElementById('firstLoginSection').style.display = 'block';

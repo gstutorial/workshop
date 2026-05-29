@@ -7,7 +7,6 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
 
-        /* Blends seamlessly with the dashboard iframe */
         body { background: transparent; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
         /* --- NAVIGATION TABS --- */
@@ -24,7 +23,6 @@
 
         .nav-item svg { width: 22px; height: 22px; }
         .nav-item span { font-size: 10px; font-weight: 700; }
-        
         .nav-item.active { color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
 
         /* --- MAIN VIEW AREA --- */
@@ -40,40 +38,53 @@
         
         .btn {
             border: none; border-radius: 12px; padding: 10px 15px; font-size: 13px; font-weight: bold;
-            cursor: pointer; display: flex; align-items: center; gap: 8px; color: white;
+            cursor: pointer; display: flex; align-items: center; gap: 8px; color: white; transition: 0.2s;
         }
+        .btn:active { transform: scale(0.95); }
         .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 4px 15px rgba(59,130,246,0.3); }
         .btn-success { background: linear-gradient(135deg, #10b981, #059669); }
         
-        /* Segmented Control (Active / Inactive toggle) */
-        .segment-control {
-            display: flex; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px; margin-bottom: 15px;
-        }
+        /* Segmented Control */
+        .segment-control { display: flex; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
         .segment-btn {
-            flex: 1; text-align: center; padding: 8px; font-size: 13px; font-weight: 700;
+            flex: 1; text-align: center; padding: 10px; font-size: 13px; font-weight: 700;
             color: #94a3b8; border-radius: 10px; cursor: pointer; transition: 0.3s;
         }
         .segment-btn.active { background: rgba(255,255,255,0.1); color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+
+        /* --- CLASS GROUPING --- */
+        .class-group { margin-bottom: 30px; }
+        .class-header {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 15px;
+            padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .class-icon {
+            width: 32px; height: 32px; border-radius: 8px; background: rgba(56, 189, 248, 0.15);
+            display: flex; align-items: center; justify-content: center; color: #38bdf8;
+        }
+        .class-title { font-size: 18px; font-weight: 800; color: white; }
+        .class-count { margin-left: auto; font-size: 11px; font-weight: bold; color: #94a3b8; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 12px; }
 
         /* --- STUDENT CARDS --- */
         .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
         
         .student-card {
-            background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
             border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 15px;
             display: flex; gap: 15px; align-items: center; cursor: pointer; transition: 0.2s;
         }
-        .student-card:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+        .student-card:hover { background: rgba(255,255,255,0.1); transform: translateY(-3px); }
 
         .s-avatar {
-            width: 55px; height: 55px; border-radius: 12px; background: rgba(0,0,0,0.2);
+            width: 50px; height: 50px; border-radius: 50%; background: rgba(0,0,0,0.3);
             display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         .s-avatar img, .s-avatar svg { width: 100%; height: 100%; object-fit: cover; }
         
         .s-info { flex: 1; min-width: 0; }
         .s-name { font-size: 16px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
-        .s-details { font-size: 12px; color: #94a3b8; display: flex; gap: 10px; margin-bottom: 6px; }
+        .s-details { font-size: 12px; color: #94a3b8; display: flex; gap: 10px; margin-bottom: 8px; }
         
         .s-fee-badge {
             font-size: 10px; padding: 4px 8px; border-radius: 6px; font-weight: 800; display: inline-block;
@@ -83,13 +94,25 @@
 
         /* --- MODAL FORMS --- */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(5px); display: none; justify-content: center; align-items: flex-end; z-index: 1000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px;
         }
         .modal {
-            background: #0f172a; width: 100%; max-width: 500px; border-radius: 24px 24px 0 0; padding: 25px;
-            max-height: 90vh; overflow-y: auto; border-top: 1px solid rgba(255,255,255,0.1);
+            background: #0f172a; width: 100%; max-width: 450px; border-radius: 20px; padding: 25px;
+            max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
+
+        /* Profile Upload Styles */
+        .profile-upload-container { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .profile-preview {
+            width: 80px; height: 80px; border-radius: 50%; background: rgba(0,0,0,0.3);
+            border: 2px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center;
+            overflow: hidden; cursor: pointer; transition: 0.3s;
+        }
+        .profile-preview:hover { border-color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
+        .profile-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-preview svg { width: 30px; height: 30px; color: #94a3b8; }
+        .upload-text { font-size: 12px; color: #38bdf8; cursor: pointer; font-weight: bold; }
 
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 6px; font-weight: bold; }
@@ -98,6 +121,7 @@
             color: white; padding: 12px; border-radius: 10px; outline: none; font-size: 14px;
         }
         .form-control:focus { border-color: #3b82f6; }
+        select.form-control option { background: #0f172a; color: white; }
         .form-row { display: flex; gap: 10px; }
 
         /* MOBILE BOTTOM NAV OVERRIDE */
@@ -106,9 +130,9 @@
             .view-container { padding-bottom: 90px; }
         }
         @media (min-width: 768px) {
-            body { border-radius: 20px; }
-            .modal { border-radius: 20px; align-self: center; margin: 20px; border: 1px solid rgba(255,255,255,0.1); }
-            .modal-overlay { align-items: center; }
+            ::-webkit-scrollbar { width: 6px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         }
     </style>
 </head>
@@ -143,14 +167,14 @@
 
             <div class="segment-control">
                 <div class="segment-btn active" id="tab-active" onclick="filterStudents('Active')">Active Students</div>
-                <div class="segment-btn" id="tab-inactive" onclick="filterStudents('Inactive')">Inactive</div>
+                <div class="segment-btn" id="tab-inactive" onclick="filterStudents('Inactive')">Inactive / Left</div>
             </div>
 
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="Search by name, class, or phone..." oninput="searchStudents(this.value)">
+                <input type="text" class="form-control" placeholder="Search by name, phone, or ID..." oninput="searchStudents(this.value)">
             </div>
 
-            <div class="student-grid" id="studentListContainer">
+            <div id="studentListContainer">
                 </div>
         </div>
 
@@ -158,23 +182,29 @@
             <div class="header-bar"><h2>Attendance Hub</h2></div>
             <p style="color: #94a3b8; text-align: center; margin-top: 50px;">Attendance Module coming in Phase 2.</p>
         </div>
-
         <div id="view-fees" class="view-section">
             <div class="header-bar"><h2>Fee Collections</h2></div>
             <p style="color: #94a3b8; text-align: center; margin-top: 50px;">Fee Module coming in Phase 3.</p>
         </div>
-
         <div id="view-exams" class="view-section">
             <div class="header-bar"><h2>Examination Records</h2></div>
             <p style="color: #94a3b8; text-align: center; margin-top: 50px;">Exams Module coming in Phase 4.</p>
         </div>
-
     </div>
 
     <div class="modal-overlay" id="studentModal" onclick="if(event.target===this) closeStudentModal()">
         <div class="modal">
-            <h2 style="margin-bottom: 20px; font-weight: 800;" id="modalTitle">Add New Student</h2>
+            <h2 style="margin-bottom: 20px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;" id="modalTitle">Add New Student</h2>
             
+            <div class="profile-upload-container">
+                <div class="profile-preview" onclick="document.getElementById('stuPhoto').click()">
+                    <img id="photoPreview" src="" style="display:none;">
+                    <svg id="photoPlaceholder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                </div>
+                <span class="upload-text" onclick="document.getElementById('stuPhoto').click()">+ Upload Profile Photo</span>
+                <input type="file" id="stuPhoto" accept="image/*" style="display:none;" onchange="previewImage(event)">
+            </div>
+
             <div class="form-row">
                 <div class="form-group" style="flex: 2;">
                     <label>Full Name</label>
@@ -192,11 +222,11 @@
             <div class="form-row">
                 <div class="form-group" style="flex: 1;">
                     <label>Class/Grade</label>
-                    <input type="text" id="stuClass" class="form-control" placeholder="e.g. 10th">
+                    <input type="text" id="stuClass" class="form-control" placeholder="e.g. Class 10">
                 </div>
                 <div class="form-group" style="flex: 1;">
-                    <label>Monthly Fee (₹)</label>
-                    <input type="number" id="stuFee" class="form-control" placeholder="1500">
+                    <label>Monthly Fee</label>
+                    <input type="number" id="stuFee" class="form-control" placeholder="₹1500">
                 </div>
             </div>
 
@@ -217,20 +247,20 @@
             </div>
             
             <div class="form-group">
-                <label>Address</label>
-                <input type="text" id="stuAddress" class="form-control" placeholder="Home Address">
+                <label>Home Address</label>
+                <input type="text" id="stuAddress" class="form-control" placeholder="Full Address">
             </div>
 
             <div class="form-group" id="statusGroup" style="display: none;">
-                <label>Status</label>
+                <label>Enrollment Status</label>
                 <select id="stuStatus" class="form-control">
                     <option value="Active">Active Student</option>
                     <option value="Inactive">Inactive / Left</option>
                 </select>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                <button class="btn" style="background: rgba(255,255,255,0.1);" onclick="closeStudentModal()">Cancel</button>
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px;">
+                <button class="btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);" onclick="closeStudentModal()">Cancel</button>
                 <button class="btn btn-success" onclick="saveStudent()">Save Student</button>
             </div>
         </div>
@@ -239,15 +269,19 @@
     <script src="../../config.js"></script>
 
     <script>
-        // Default SVG Avatars based on Gender
+        // Generic Default Avatars
         const maleSVG = `<svg viewBox="0 0 24 24" fill="#60a5fa"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
         const femaleSVG = `<svg viewBox="0 0 24 24" fill="#f472b6"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`;
+        
+        // Class Section Icon
+        const classSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>`;
 
         // Dummy State for Phase 1 Testing
         let students = [
-            { id: "S-101", name: "Aarav Sharma", gender: "Male", class: "10th", fee: 1500, joinDate: "2026-04-03", mobile: "9876543210", school: "DPS", address: "Sector 4", status: "Active" },
-            { id: "S-102", name: "Priya Singh", gender: "Female", class: "9th", fee: 1200, joinDate: "2026-05-15", mobile: "9123456780", school: "KV", address: "Phase 1", status: "Active" },
-            { id: "S-103", name: "Rohan Verma", gender: "Male", class: "10th", fee: 1500, joinDate: "2025-10-10", mobile: "9988776655", school: "DPS", address: "Sector 12", status: "Inactive" }
+            { id: "S-101", name: "Aarav Sharma", gender: "Male", class: "Class 10", fee: 1500, joinDate: "2026-04-03", mobile: "9876543210", school: "DPS", address: "Sector 4", status: "Active" },
+            { id: "S-102", name: "Rohan Verma", gender: "Male", class: "Class 10", fee: 1500, joinDate: "2025-10-10", mobile: "9988776655", school: "DPS", address: "Sector 12", status: "Active" },
+            { id: "S-103", name: "Priya Singh", gender: "Female", class: "Class 9", fee: 1200, joinDate: "2026-05-15", mobile: "9123456780", school: "KV", address: "Phase 1", status: "Active" },
+            { id: "S-104", name: "Karan Patel", gender: "Male", class: "Class 9", fee: 1200, joinDate: "2025-02-11", mobile: "9876511111", school: "DAV", address: "Sector 9", status: "Inactive" }
         ];
 
         let currentFilter = 'Active';
@@ -260,7 +294,7 @@
             element.classList.add('active');
         }
 
-        // --- STUDENT RENDER LOGIC ---
+        // --- STUDENT RENDER LOGIC (GROUPED BY CLASS) ---
         function renderStudents(searchQuery = "") {
             const container = document.getElementById('studentListContainer');
             container.innerHTML = "";
@@ -274,34 +308,58 @@
             });
 
             if(filtered.length === 0) {
-                container.innerHTML = `<p style="color:#94a3b8; grid-column: 1/-1; text-align: center;">No ${currentFilter.toLowerCase()} students found.</p>`;
+                container.innerHTML = `<p style="color:#94a3b8; text-align: center; margin-top: 30px;">No ${currentFilter.toLowerCase()} students found.</p>`;
                 return;
             }
 
+            // Group students by Class
+            const grouped = {};
             filtered.forEach(s => {
-                const avatar = s.gender === 'Female' ? femaleSVG : maleSVG;
-                
-                // Demo Calculation for Fee Status (Will be dynamic in Phase 3)
-                const isDue = Math.random() > 0.5; 
-                const feeBadge = isDue ? `<span class="s-fee-badge s-fee-due">Fee Due</span>` : `<span class="s-fee-badge">Paid</span>`;
+                if (!grouped[s.class]) grouped[s.class] = [];
+                grouped[s.class].push(s);
+            });
 
-                const card = document.createElement('div');
-                card.className = 'student-card';
-                card.onclick = () => alert("Student Profile & Edit coming up!");
+            // Render each class group
+            for (const className in grouped) {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'class-group';
                 
-                card.innerHTML = `
-                    <div class="s-avatar">${avatar}</div>
-                    <div class="s-info">
-                        <div class="s-name">${s.name}</div>
-                        <div class="s-details">
-                            <span>Class: ${s.class}</span>
-                            <span>ID: ${s.id}</span>
-                        </div>
-                        ${currentFilter === 'Active' ? feeBadge : `<span class="s-fee-badge" style="color:#94a3b8; border-color:#64748b;">Left</span>`}
+                const classHeader = `
+                    <div class="class-header">
+                        <div class="class-icon">${classSVG}</div>
+                        <div class="class-title">${className}</div>
+                        <div class="class-count">${grouped[className].length} Students</div>
                     </div>
                 `;
-                container.appendChild(card);
-            });
+                
+                let cardsHtml = '<div class="student-grid">';
+                grouped[className].forEach(s => {
+                    const avatar = s.gender === 'Female' ? femaleSVG : maleSVG;
+                    
+                    // Demo Logic for Fees
+                    const isDue = Math.random() > 0.5; 
+                    const feeBadge = isDue ? `<span class="s-fee-badge s-fee-due">Fee Due</span>` : `<span class="s-fee-badge">Paid</span>`;
+                    const statusBadge = currentFilter === 'Active' ? feeBadge : `<span class="s-fee-badge" style="color:#94a3b8; border-color: rgba(255,255,255,0.2); background: transparent;">Left</span>`;
+
+                    cardsHtml += `
+                        <div class="student-card" onclick="alert('Student Profile & Edit coming up!')">
+                            <div class="s-avatar">${avatar}</div>
+                            <div class="s-info">
+                                <div class="s-name">${s.name}</div>
+                                <div class="s-details">
+                                    <span>₹${s.fee} / mo</span>
+                                    <span>ID: ${s.id}</span>
+                                </div>
+                                ${statusBadge}
+                            </div>
+                        </div>
+                    `;
+                });
+                cardsHtml += '</div>';
+                
+                groupDiv.innerHTML = classHeader + cardsHtml;
+                container.appendChild(groupDiv);
+            }
         }
 
         function filterStudents(status) {
@@ -313,25 +371,42 @@
 
         function searchStudents(query) { renderStudents(query); }
 
-        // --- MODAL LOGIC ---
+        // --- MODAL & IMAGE PREVIEW LOGIC ---
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const img = document.getElementById('photoPreview');
+                img.src = reader.result;
+                img.style.display = 'block';
+                document.getElementById('photoPlaceholder').style.display = 'none';
+            }
+            if(event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
+        }
+
         function openStudentModal() {
             document.getElementById('modalTitle').innerText = "Add New Student";
             document.getElementById('statusGroup').style.display = 'none';
+            
             // Clear form
             ['stuName','stuClass','stuFee','stuJoinDate','stuMobile','stuSchool','stuAddress'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('stuGender').value = 'Male';
             
+            // Reset Image Preview
+            document.getElementById('photoPreview').src = '';
+            document.getElementById('photoPreview').style.display = 'none';
+            document.getElementById('photoPlaceholder').style.display = 'block';
+            document.getElementById('stuPhoto').value = '';
+
             document.getElementById('studentModal').style.display = 'flex';
         }
 
         function closeStudentModal() { document.getElementById('studentModal').style.display = 'none'; }
 
         function saveStudent() {
-            alert("This will send data to the new 'Students' sheet in Phase 1 backend connection.");
+            alert("This will send data to the Google Sheets backend in the next phase!");
             closeStudentModal();
         }
 
-        // Init
         window.onload = () => renderStudents();
     </script>
 </body>

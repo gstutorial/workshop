@@ -11,31 +11,38 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
         
-        /* STRICT LOCK: Prevents the entire page from scrolling, anchoring the bottom nav */
-        body { 
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-            background: transparent; color: white; display: flex; flex-direction: column; 
+        /* STRICT MOBILE LOCK: Anchors iframe perfectly, stopping address bar glitches */
+        html, body { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            width: 100%; height: 100%; overflow: hidden; background: transparent; color: white;
         }
+
+        .app-container { display: flex; flex-direction: column; height: 100%; width: 100%; }
+
+        /* --- MAIN SCROLLABLE VIEW AREA --- */
+        .view-container { 
+            flex: 1; overflow-y: auto; padding: 15px; position: relative; z-index: 1; 
+            -webkit-overflow-scrolling: touch; /* Smooth scroll on iPhones/Androids */
+        }
+        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- NAVIGATION TABS --- */
         .app-nav {
-            display: flex; justify-content: space-around; background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.05); padding: 10px; flex-shrink: 0; z-index: 100;
+            display: flex; justify-content: space-around; background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.05); 
+            padding: 10px 10px calc(10px + env(safe-area-inset-bottom)); /* iPhone notch safe */
+            flex-shrink: 0; z-index: 100;
         }
         .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #94a3b8; cursor: pointer; padding: 6px 12px; border-radius: 12px; transition: 0.3s; }
         .nav-item svg { width: 22px; height: 22px; }
         .nav-item span { font-size: 10px; font-weight: 700; }
         .nav-item.active { color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
 
-        /* --- MAIN VIEW AREA --- */
-        .view-container { flex: 1; overflow-y: auto; padding: 15px; position: relative; z-index: 1; }
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
-        .view-section.active { display: block; } /* Fixed: Removed inline flex that broke layout */
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
         /* --- UI COMPONENTS --- */
-        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; position: relative; z-index: 5; }
         .header-bar h2 { font-size: 20px; font-weight: 800; }
         
         .btn {
@@ -69,7 +76,7 @@
         .class-group.active .class-content { display: block; animation: slideDown 0.3s ease; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- OLDER STUDENT CARD VIEW REVERTED --- */
+        /* --- STUDENT CARDS (Classic Layout Restored) --- */
         .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
         
         .student-card {
@@ -93,7 +100,7 @@
         .s-fee-due { background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
 
         /* Action Buttons Horizontal on Right */
-        .s-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .s-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
         .action-icon {
             width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
             text-decoration: none; color: white; transition: 0.2s; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
@@ -116,9 +123,9 @@
             border-radius: 12px 12px 0 0; margin-right: 4px; border: 1px solid transparent; border-bottom: none;
         }
         .p-tab.active {
-            background: rgba(15, 23, 42, 0.95); /* Matches content area */
+            background: rgba(15, 23, 42, 0.95); 
             color: white; border-color: rgba(255,255,255,0.1); 
-            margin-bottom: -1px; /* Overlaps bottom border to look connected */
+            margin-bottom: -1px; 
         }
         
         .p-tab-content-wrapper { background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.1); border-top: none; border-radius: 0 0 16px 16px; padding: 15px; }
@@ -131,9 +138,14 @@
 
         /* --- MODALS --- */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
             display: none; justify-content: center; align-items: center; z-index: 9999; padding: 20px;
         }
+        .modal {
+            background: #0f172a; width: 100%; max-width: 450px; border-radius: 20px; padding: 25px;
+            max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
         .custom-dialog {
             background: linear-gradient(135deg, #1e293b, #0f172a); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 25px;
             width: 100%; max-width: 350px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.6); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -147,13 +159,13 @@
         .dialog-actions { display: flex; gap: 10px; }
         .dialog-actions .btn { flex: 1; justify-content: center; }
 
-        .modal { background: #0f172a; width: 100%; max-width: 450px; border-radius: 20px; padding: 25px; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .profile-upload-container { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
         .profile-preview { width: 80px; height: 80px; border-radius: 50%; background: rgba(0,0,0,0.3); border: 2px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: 0.3s; }
         .profile-preview:hover { border-color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
         .profile-preview img { width: 100%; height: 100%; object-fit: cover; }
         .profile-preview svg { width: 30px; height: 30px; color: #94a3b8; }
         .upload-text { font-size: 12px; color: #38bdf8; cursor: pointer; font-weight: bold; }
+        
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 6px; font-weight: bold; }
         .form-control { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 12px; border-radius: 10px; outline: none; font-size: 14px; }
@@ -168,105 +180,110 @@
 </head>
 <body>
 
-    <div class="view-container">
-        
-        <div id="view-students" class="view-section active">
-            <div class="header-bar">
-                <h2>Directory</h2>
-                <button class="btn btn-primary" id="addStudentBtn" onclick="openStudentModal()">+ Add Student</button>
-            </div>
-
-            <div class="segment-control" id="segmentControl">
-                <div class="segment-btn active" id="tab-active" onclick="filterStudents('Active')">Active Students</div>
-                <div class="segment-btn" id="tab-inactive" onclick="filterStudents('Inactive')">Inactive / Left</div>
-            </div>
-
-            <div class="form-group" id="searchBarGroup">
-                <input type="text" class="form-control" placeholder="Search by name, phone, or class..." oninput="searchStudents(this.value)">
-            </div>
+    <div class="app-container">
+        <div class="view-container">
             
-            <div id="studentListContainer"></div>
-        </div>
-
-        <div id="view-profile" class="view-section">
-            <div class="header-bar">
-                <button class="btn" style="background: rgba(255,255,255,0.1); padding: 8px 12px;" onclick="switchTab('students', document.getElementById('navDir'))">← Back</button>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn btn-danger" id="adminDeleteBtn" onclick="deleteStudent()" style="display: none;" title="Delete Student">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    </button>
-                    <button class="btn btn-primary" id="editProfileBtn" onclick="showCustomAlert('Coming Soon', 'Edit Profile logic will be added next.')">Edit Profile</button>
+            <div id="view-students" class="view-section active">
+                <div class="header-bar">
+                    <h2>Directory</h2>
+                    <button class="btn btn-primary" id="addStudentBtn" onclick="openStudentModal()">+ Add Student</button>
                 </div>
-            </div>
-            
-            <div class="profile-header">
-                <div class="p-avatar" id="profAvatar"></div>
-                <div class="p-info">
-                    <h2 id="profName">Student Name</h2>
-                    <p id="profId">ID: S-100</p>
+
+                <div class="segment-control" id="segmentControl">
+                    <div class="segment-btn active" id="tab-active" onclick="filterStudents('Active')">Active Students</div>
+                    <div class="segment-btn" id="tab-inactive" onclick="filterStudents('Inactive')">Inactive / Left</div>
                 </div>
+
+                <div class="form-group" id="searchBarGroup">
+                    <input type="text" class="form-control" placeholder="Search by name, phone, or class..." oninput="searchStudents(this.value)">
+                </div>
+                
+                <div id="studentListContainer"></div>
             </div>
 
-            <div class="profile-nav" id="profileNavRow">
-                <div class="p-tab active" onclick="switchProfileTab('overview')" id="tab-overview">Overview</div>
-                <div class="p-tab" onclick="switchProfileTab('p-attendance')" id="tab-p-attendance">Attendance</div>
-                <div class="p-tab" onclick="switchProfileTab('p-fees')" id="tab-p-fees">Fee Records</div>
-                <div class="p-tab" onclick="switchProfileTab('p-exams')" id="tab-p-exams">Examinations</div>
-            </div>
-
-            <div class="p-tab-content-wrapper" id="profileSwipeArea">
-                <div class="p-tab-content" id="ptab-overview" style="display: block;">
-                    <div style="margin-bottom: 20px;">
-                        <div class="p-card-title">Academic Info</div>
-                        <div class="p-data-row"><span class="p-data-label">Class</span><span id="profClass">10th</span></div>
-                        <div class="p-data-row"><span class="p-data-label">School</span><span id="profSchool">DPS</span></div>
-                        <div class="p-data-row"><span class="p-data-label">Joined</span><span id="profJoined">Date</span></div>
+            <div id="view-profile" class="view-section">
+                <div class="header-bar">
+                    <button class="btn" style="background: rgba(255,255,255,0.1); padding: 8px 12px;" onclick="switchTab('students')">← Back</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-danger" id="adminDeleteBtn" onclick="deleteStudent()" style="display: none;" title="Delete Student">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        </button>
+                        <button class="btn btn-primary" id="editProfileBtn" onclick="showCustomAlert('Coming Soon', 'Edit Profile logic will be added next.')">Edit Profile</button>
                     </div>
-                    <div>
-                        <div class="p-card-title">Contact & Billing</div>
-                        <div class="p-data-row"><span class="p-data-label">Mobile</span><span id="profMobile">98765</span></div>
-                        <div class="p-data-row"><span class="p-data-label">Address</span><span id="profAddress">Sector 4</span></div>
-                        <div class="p-data-row"><span class="p-data-label">Monthly Fee</span><span id="profFee">₹1500</span></div>
+                </div>
+                
+                <div class="profile-header">
+                    <div class="p-avatar" id="profAvatar"></div>
+                    <div class="p-info">
+                        <h2 id="profName">Student Name</h2>
+                        <p id="profId">ID: S-100</p>
                     </div>
                 </div>
 
-                <div class="p-tab-content" id="ptab-p-attendance">
-                    <p style="text-align:center; color:#94a3b8; padding: 20px;">Calendar View & Marking coming in Phase 2</p>
+                <div class="profile-nav" id="profileNavRow">
+                    <div class="p-tab active" onclick="switchProfileTab('overview')" id="tab-overview">Overview</div>
+                    <div class="p-tab" onclick="switchProfileTab('p-attendance')" id="tab-p-attendance">Attendance</div>
+                    <div class="p-tab" onclick="switchProfileTab('p-fees')" id="tab-p-fees">Fee Records</div>
+                    <div class="p-tab" onclick="switchProfileTab('p-exams')" id="tab-p-exams">Examinations</div>
                 </div>
-                <div class="p-tab-content" id="ptab-p-fees">
-                    <p style="text-align:center; color:#94a3b8; padding: 20px;">Payment logging and PDF Receipts coming in Phase 3</p>
-                </div>
-                <div class="p-tab-content" id="ptab-p-exams">
-                    <p style="text-align:center; color:#94a3b8; padding: 20px;">Mark entry and PDF Report Cards coming in Phase 4</p>
+
+                <div class="p-tab-content-wrapper swipe-container" id="profileSwipeArea">
+                    <div class="p-tab-content" id="ptab-overview" style="display: block;">
+                        <div style="margin-bottom: 20px;">
+                            <div class="p-card-title">Academic Info</div>
+                            <div class="p-data-row"><span class="p-data-label">Class</span><span id="profClass">10th</span></div>
+                            <div class="p-data-row"><span class="p-data-label">School</span><span id="profSchool">DPS</span></div>
+                            <div class="p-data-row"><span class="p-data-label">Joined</span><span id="profJoined">Date</span></div>
+                        </div>
+                        <div>
+                            <div class="p-card-title">Contact & Billing</div>
+                            <div class="p-data-row"><span class="p-data-label">Mobile</span><span id="profMobile">98765</span></div>
+                            <div class="p-data-row"><span class="p-data-label">Address</span><span id="profAddress">Sector 4</span></div>
+                            <div class="p-data-row"><span class="p-data-label">Monthly Fee</span><span id="profFee">₹1500</span></div>
+                        </div>
+                    </div>
+
+                    <div class="p-tab-content" id="ptab-p-attendance"><p style="text-align:center; color:#94a3b8; padding: 20px;">Calendar View & Marking coming in Phase 2</p></div>
+                    <div class="p-tab-content" id="ptab-p-fees"><p style="text-align:center; color:#94a3b8; padding: 20px;">Payment logging and PDF Receipts coming in Phase 3</p></div>
+                    <div class="p-tab-content" id="ptab-p-exams"><p style="text-align:center; color:#94a3b8; padding: 20px;">Mark entry and PDF Report Cards coming in Phase 4</p></div>
                 </div>
             </div>
+
+            <div id="view-attendance" class="view-section"><div class="header-bar"><h2>Attendance Hub</h2></div><p style="text-align:center; color:#94a3b8; margin-top:50px;">Coming in Phase 2</p></div>
+            <div id="view-fees" class="view-section"><div class="header-bar"><h2>Fee Collections</h2></div><p style="text-align:center; color:#94a3b8; margin-top:50px;">Coming in Phase 3</p></div>
+            <div id="view-exams" class="view-section"><div class="header-bar"><h2>Examination Records</h2></div><p style="text-align:center; color:#94a3b8; margin-top:50px;">Coming in Phase 4</p></div>
         </div>
 
-        <div id="view-attendance" class="view-section"><div class="header-bar"><h2>Attendance Hub</h2></div><p style="text-align:center; color:#94a3b8; margin-top:50px;">Coming in Phase 2</p></div>
-        <div id="view-fees" class="view-section"><div class="header-bar"><h2>Fee Collections</h2></div><p style="text-align:center; color:#94a3b8; margin-top:50px;">Coming in Phase 3</p></div>
-        <div id="view-exams" class="view-section"><div class="header-bar"><h2>Examination Records</h2></div><p style="text-align:center; color:#94a3b8; margin-top:50px;">Coming in Phase 4</p></div>
+        <nav class="app-nav">
+            <div class="nav-item active" onclick="switchTab('students', this)" id="navDir">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span id="navDirText">Directory</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('attendance', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span>Attendance</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('fees', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                <span>Fees</span>
+            </div>
+            <div class="nav-item" onclick="switchTab('exams', this)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                <span>Exams</span>
+            </div>
+        </nav>
     </div>
 
-    <nav class="app-nav">
-        <div class="nav-item active" onclick="switchTab('students', this)" id="navDir">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-            <span id="navDirText">Directory</span>
+    <div class="custom-dialog-overlay" id="customDialogOverlay" style="display: none;">
+        <div class="custom-dialog">
+            <div id="dialogIcon"></div>
+            <h3 id="dialogTitle">Title</h3>
+            <p id="dialogMessage">Message</p>
+            <div class="dialog-actions" id="dialogActions"></div>
         </div>
-        <div class="nav-item" onclick="switchTab('attendance', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            <span>Attendance</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('fees', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-            <span>Fees</span>
-        </div>
-        <div class="nav-item" onclick="switchTab('exams', this)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-            <span>Exams</span>
-        </div>
-    </nav>
+    </div>
 
-    <div class="modal-overlay" id="cropModal" style="z-index: 1001;">
+    <div class="modal-overlay" id="cropModal" style="display: none;">
         <div class="modal">
             <h3 style="margin-bottom: 15px; color: white;">Adjust Profile Photo</h3>
             <div class="cropper-container">
@@ -279,7 +296,7 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="studentModal" onclick="if(event.target===this) closeStudentModal()">
+    <div class="modal-overlay" id="studentModal" onclick="if(event.target===this) closeStudentModal()" style="display: none;">
         <div class="modal">
             <h2 style="margin-bottom: 20px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;" id="modalTitle">Add New Student</h2>
             
@@ -298,7 +315,7 @@
             </div>
             <div class="form-row">
                 <div class="form-group" style="flex: 1;"><label>Class/Grade</label><input type="text" id="stuClass" class="form-control" placeholder="e.g. Class 10"></div>
-                <div class="form-group" style="flex: 1;"><label>Monthly Fee</label><input type="number" id="stuFee" class="form-control" placeholder="₹1500"></div>
+                <div class="form-group" style="flex: 1;"><label>Monthly Fee</label><input type="number" id="stuFee" class="form-control" placeholder="1500"></div>
             </div>
             <div class="form-row">
                 <div class="form-group" style="flex: 1;"><label>Joining Date</label><input type="date" id="stuJoinDate" class="form-control"></div>
@@ -307,19 +324,15 @@
             <div class="form-group"><label>School Name</label><input type="text" id="stuSchool" class="form-control" placeholder="School Name"></div>
             <div class="form-group"><label>Home Address</label><input type="text" id="stuAddress" class="form-control" placeholder="Full Address"></div>
 
+            <div class="form-group" id="statusGroup" style="display: none;">
+                <label>Enrollment Status</label>
+                <select id="stuStatus" class="form-control"><option value="Active">Active Student</option><option value="Inactive">Inactive / Left</option></select>
+            </div>
+
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px;">
                 <button class="btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);" onclick="closeStudentModal()">Cancel</button>
                 <button class="btn btn-success" id="saveStudentBtn" onclick="saveStudent()">Save Student</button>
             </div>
-        </div>
-    </div>
-
-    <div class="custom-dialog-overlay" id="customDialogOverlay">
-        <div class="custom-dialog">
-            <div id="dialogIcon"></div>
-            <h3 id="dialogTitle">Title</h3>
-            <p id="dialogMessage">Message</p>
-            <div class="dialog-actions" id="dialogActions"></div>
         </div>
     </div>
 
@@ -413,7 +426,6 @@
             const container = document.getElementById('studentListContainer');
             container.innerHTML = '<div style="text-align:center; padding: 40px; color: #94a3b8;">Loading database...</div>';
             try {
-                // BUG FIX: Ensure we explicitly pass BOTH auth styles to guarantee backend catches it
                 const payload = { action: 'get_students', username: sessionUser, token: sessionToken, adminUsername: sessionUser, adminToken: sessionToken };
                 const response = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
                 const result = await response.json();
@@ -541,7 +553,8 @@
         }
 
         function openStudentModal() {
-            document.getElementById('modalTitle').innerText = "Add New Student"; document.getElementById('statusGroup').style.display = 'none';
+            document.getElementById('modalTitle').innerText = "Add New Student";
+            document.getElementById('statusGroup').style.display = 'none';
             ['stuName','stuClass','stuFee','stuJoinDate','stuMobile','stuSchool','stuAddress'].forEach(id => document.getElementById(id).value = '');
             document.getElementById('stuGender').value = 'Male';
             document.getElementById('photoPreview').src = ''; document.getElementById('photoPreview').style.display = 'none';
@@ -587,7 +600,6 @@
             if(!confirmed) return;
 
             try {
-                // FIXED PAYLOAD: Passing both auth styles to guarantee backward compatibility
                 const payload = { 
                     action: 'delete_student', username: sessionUser, token: sessionToken, adminUsername: sessionUser, adminToken: sessionToken, 
                     studentId: currentViewedStudent.id, mobile: currentViewedStudent.mobile 

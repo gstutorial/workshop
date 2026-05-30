@@ -158,28 +158,42 @@ body {
         .dialog-actions { display: flex; gap: 10px; width: 100%; justify-content: center; }
 
         /* FIX 2: AGGRESSIVELY TIGHTENED MODAL TO FIT SMALL SCREENS */
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; 
-            justify-content: center; align-items: center; z-index: 1000; padding: 10px; 
-        }
+        .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(5px);
+    display: none;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 75px;
+    z-index: 1000;
+}
         .modal {
     background: #0f172a;
-    width: 95%;
-    max-width: 650px;
+    width: calc(100% - 40px);
+    max-width: 520px;
     border-radius: 20px;
     padding: 20px;
-    max-height: 90vh;
+    max-height: 85vh;
     overflow-y: auto;
     border: 1px solid rgba(255,255,255,0.15);
     box-shadow: 0 10px 40px rgba(0,0,0,0.4);
 }
-        @media (max-width: 768px) {
+
+@media (max-width: 768px) {
     .modal {
-        width: calc(100% - 20px);
-        padding: 16px;
-        max-height: 88vh;
+        width: calc(100% - 40px);
+        max-width: none;
+        padding: 18px;
+        max-height: calc(100vh - 180px);
+        margin-top: 20px;
+        margin-bottom: 90px;
     }
+}
 
     .form-row {
         flex-direction: column;

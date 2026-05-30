@@ -37,14 +37,21 @@ body {
         .nav-item.active { color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
 
         /* --- MAIN VIEW AREA --- */
-        .view-container {
-    width: 100%;
-    height: calc(100dvh - 78px);
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 15px;
-    padding-bottom: 20px;
-    overscroll-behavior: contain;
+        function forcePWALayoutRefresh() {
+    const nav = document.querySelector('.app-nav');
+    const container = document.querySelector('.view-container');
+
+    if (!nav || !container) return;
+
+    const navHeight = nav.offsetHeight || 85;
+
+    container.style.bottom = navHeight + 'px';
+
+    nav.style.display = 'none';
+
+    requestAnimationFrame(() => {
+        nav.style.display = 'flex';
+    });
 }
         
         .view-section { display: none; animation: fadeIn 0.3s ease; }
@@ -611,6 +618,7 @@ window.onload = () => {
     setTimeout(forcePWALayoutRefresh, 100);
     setTimeout(forcePWALayoutRefresh, 500);
     setTimeout(forcePWALayoutRefresh, 1000);
+    setTimeout(forcePWALayoutRefresh, 2000);
 };
 
 window.addEventListener('focus', forcePWALayoutRefresh);

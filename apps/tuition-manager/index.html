@@ -13,7 +13,9 @@
         
         body { 
             background: transparent; color: white; margin: 0;
-            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column; 
+            height: 100vh; height: 100dvh; /* FIX: Added 100dvh to lock to dynamic mobile viewports */
+            overflow: hidden;
         }
 
         /* --- BULLETPROOF FIXED BOTTOM NAV --- */
@@ -31,7 +33,7 @@
 
         /* --- MAIN VIEW AREA --- */
         .view-container { 
-            flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; 
+            flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; /* Space for the fixed nav */
             -webkit-overflow-scrolling: touch; 
         }
         .view-section { display: none; animation: fadeIn 0.3s ease; }
@@ -66,7 +68,7 @@
         .class-content { display: none; padding: 0 12px 15px 12px; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 5px; padding-top: 15px; }
         .class-group.active .class-content { display: block; animation: slideDown 0.3s ease; }
 
-        /* --- STUDENT CARDS --- */
+        /* --- STUDENT CARDS (Classic Vertical Button Layout) --- */
         .student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
         
         .student-card {
@@ -84,6 +86,7 @@
         .s-fee-badge { font-size: 9px; padding: 4px 6px; border-radius: 6px; font-weight: 800; display: inline-block; width: fit-content; background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
         .s-fee-due { background: rgba(239, 68, 68, 0.15); color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
 
+        /* Actions stacked perfectly on the right */
         .s-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; margin-left: auto; }
         .action-icon { width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; text-decoration: none; color: white; transition: 0.2s; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
         .icon-wa { color: #4ade80; }
@@ -109,7 +112,7 @@
         .p-data-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; }
         .p-data-label { color: #94a3b8; }
 
-        /* --- POPUPS / MODALS --- */
+        /* --- POPUPS / MODALS (Reverted exactly to your screenshot styling) --- */
         .custom-dialog-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
             display: none; justify-content: center; align-items: center; z-index: 10000; padding: 20px;
@@ -131,19 +134,19 @@
         .dialog-actions .btn-danger { background: #ef4444; color: white; width: 100%; padding: 12px; border-radius: 10px; }
         .dialog-actions { display: flex; gap: 10px; width: 100%; justify-content: center; }
 
-        /* --- TIGHTENED ADD/EDIT MODAL --- */
+        /* --- ADD/EDIT MODAL --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
-        .modal { background: #0f172a; width: 100%; max-width: 450px; border-radius: 20px; padding: 20px; /* Reduced from 25px */ max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.15); }
-        .profile-upload-container { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 12px; /* Tightened gap */ }
-        .profile-preview { width: 70px; height: 70px; /* Shrunk from 80px */ border-radius: 50%; background: rgba(0,0,0,0.3); border: 2px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: 0.3s; }
+        .modal { background: #0f172a; width: 100%; max-width: 450px; border-radius: 20px; padding: 25px; max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.15); }
+        .profile-upload-container { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .profile-preview { width: 80px; height: 80px; border-radius: 50%; background: rgba(0,0,0,0.3); border: 2px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer; transition: 0.3s; }
         .profile-preview img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-preview svg { width: 26px; height: 26px; color: #94a3b8; }
+        .profile-preview svg { width: 30px; height: 30px; color: #94a3b8; }
         .upload-text { font-size: 12px; color: #38bdf8; cursor: pointer; font-weight: bold; }
-        .form-group { margin-bottom: 10px; /* Reduced from 15px */ }
-        .form-group label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 4px; font-weight: bold; }
-        .form-control { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 10px; /* Reduced from 12px */ border-radius: 10px; outline: none; font-size: 14px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 6px; font-weight: bold; }
+        .form-control { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); color: white; padding: 12px; border-radius: 10px; outline: none; font-size: 14px; }
         .form-row { display: flex; gap: 10px; }
-        .cropper-container { max-height: 250px; width: 100%; margin-bottom: 10px; }
+        .cropper-container { max-height: 300px; width: 100%; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -262,7 +265,7 @@
 
     <div class="modal-overlay" id="studentModal" onclick="if(event.target===this) closeStudentModal()">
         <div class="modal">
-            <h2 style="margin-bottom: 10px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;" id="modalTitle">Add New Student</h2>
+            <h2 style="margin-bottom: 20px; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;" id="modalTitle">Add New Student</h2>
             
             <div class="profile-upload-container">
                 <div class="profile-preview" onclick="document.getElementById('stuPhoto').click()">
@@ -294,7 +297,7 @@
                 <select id="stuStatus" class="form-control"><option value="Active">Active Student</option><option value="Inactive">Inactive / Left</option></select>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 25px;">
                 <button class="btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);" onclick="closeStudentModal()">Cancel</button>
                 <button class="btn btn-success" id="saveStudentBtn" onclick="saveStudent()">Save Student</button>
             </div>
@@ -405,6 +408,7 @@
                         if(students.length > 0) openStudentProfile(students[0].id);
                     } else {
                         document.getElementById('adminDeleteBtn').style.display = 'block';
+                        // Initial render
                         renderStudents(); 
                     }
                 } else { container.innerHTML = `<div style="text-align:center; color: #ef4444;">Error: ${result.message}</div>`; }
@@ -426,24 +430,20 @@
             switchProfileTab('overview'); switchTab('profile');
         }
 
+        // FIX: The render function now dynamically pulls the current search box value
         function renderStudents() {
             const container = document.getElementById('studentListContainer');
             container.innerHTML = "";
-
+            
+            // Grab the current value directly from the input box (defaulting to empty string)
             const searchInputEl = document.getElementById('searchInput');
             const searchQuery = searchInputEl ? searchInputEl.value.toLowerCase() : "";
 
             const filtered = students.filter(s => {
                 const matchesStatus = s.status === currentFilter;
-                
-                // SAFE string conversions to prevent JS errors when searching numbers
-                const safeName = (s.name || "").toString().toLowerCase();
-                const safeClass = (s.class || "").toString().toLowerCase();
-                const safeMobile = (s.mobile || "").toString();
-
-                const matchesSearch = safeName.includes(searchQuery) || 
-                                      safeClass.includes(searchQuery) || 
-                                      safeMobile.includes(searchQuery);
+                const matchesSearch = s.name.toLowerCase().includes(searchQuery) || 
+                                      s.class.toLowerCase().includes(searchQuery) || 
+                                      s.mobile.includes(searchQuery);
                 return matchesStatus && matchesSearch;
             });
 
@@ -504,7 +504,10 @@
             renderStudents();
         }
 
-        function searchStudents() { renderStudents(); }
+        // FIX: searchStudents simply triggers renderStudents, which now independently grabs the input value
+        function searchStudents() { 
+            renderStudents(); 
+        }
 
         function initCrop(event) {
             const file = event.target.files[0]; if (!file) return;

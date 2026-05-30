@@ -276,7 +276,7 @@
         </div>
     </div>
 
-    <button id="installAppBtn" class="install-fab">📲 Install App</button>
+    <button id="installAppBtn" class="install-fab">ðŸ“² Install App</button>
 
     <script src="config.js"></script>
 
@@ -390,6 +390,7 @@
             document.getElementById('sidebarOverlay').classList.remove('active');
 
             const viewer = document.getElementById('appViewer');
+            document.getElementById('mobileHeader').style.display='none';
             viewer.src = `${path}?perms=${encodeURIComponent(JSON.stringify(permissions))}`;
             viewer.style.display = 'block';
         }
@@ -400,6 +401,7 @@
             
             document.getElementById('desktopBackBtn').classList.remove('active');
             
+            document.getElementById('mobileHeader').style.display='flex';
             document.getElementById('headerApp').style.display = 'none';
             document.getElementById('headerDashboard').style.display = 'flex';
             

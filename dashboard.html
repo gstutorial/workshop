@@ -390,8 +390,16 @@
             document.getElementById('sidebarOverlay').classList.remove('active');
 
             const viewer = document.getElementById('appViewer');
-            viewer.src = `${path}?perms=${encodeURIComponent(JSON.stringify(permissions))}`;
-            viewer.style.display = 'block';
+            viewer.onload = () => {
+    try {
+        viewer.contentWindow.postMessage({
+            action: 'fixBottomNav'
+        }, '*');
+    } catch (e) {}
+};
+
+viewer.src = `${path}?perms=${encodeURIComponent(JSON.stringify(permissions))}`;
+viewer.style.display = 'block';
         }
 
         function closeApp() {

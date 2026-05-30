@@ -570,8 +570,11 @@ body {
 function fixBottomNav() {
     const nav = document.querySelector('.app-nav');
     if (!nav) return;
+
     nav.style.display = 'none';
+
     requestAnimationFrame(() => {
+        nav.offsetHeight;
         nav.style.display = 'flex';
     });
 }
@@ -582,7 +585,13 @@ window.addEventListener('orientationchange', fixBottomNav);
 document.addEventListener('visibilitychange', () => {
     if (!document.hidden) fixBottomNav();
 });
-
+window.addEventListener('message', (event) => {
+    if (event.data && event.data.action === 'fixBottomNav') {
+        setTimeout(fixBottomNav, 100);
+        setTimeout(fixBottomNav, 300);
+        setTimeout(fixBottomNav, 600);
+    }
+});
 
 window.onload = () => fetchStudents();
     </script>
